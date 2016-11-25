@@ -1,0 +1,17 @@
+﻿@{
+    ViewBag.Title = "DetailedSearch";
+}
+
+<h2>Detailed Search</h2>
+
+
+@using (Html.BeginForm("SearchResults", "Artists", FormMethod.Get))
+{
+    <p class="form-group">
+        Name: @Html.TextBox("NameString", null, new { @class = "form-control" }) <br />
+
+        @Html.DropDownList("SelectedGenre", (SelectList)ViewBag.AllGenres, new { @class = "form-control" })
+
+        <input type="submit" value="Search" class="btn btn-default" />
+    </p>
+}

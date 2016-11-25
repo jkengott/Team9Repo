@@ -1,0 +1,90 @@
+﻿@model IEnumerable<Team9.Models.Album>
+    @using Team9.Models
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+@using (Html.BeginForm())
+{
+    <p class="form-group">
+        Search: @Html.TextBox("AlbumString", null, new { @class = "form-control" }) <br />
+        <input type="submit" value="Search" class="btn btn-default" />
+        @Html.ActionLink("Advanced Search", "DetailedSearch", null, new { @class = "btn btn-default" })
+        @Html.ActionLink("Show All", "Index", null, new { @class = "btn btn-default" })
+    </p>
+}
+
+
+<p>Displaying @ViewBag.SelectedAlbumCount of @ViewBag.TotalAlbumCount <p />
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.AlbumName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AlbumPrice)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AlbumArtist)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AlbumGenre)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AlbumRatings)
+        </th>
+
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.AlbumName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AlbumPrice)
+            </td>
+
+            <td>
+                @foreach (Artist a in item.AlbumArtist)
+                {
+                    <span>@a.ArtistName *</span>
+                }
+              </td > 
+            <td>
+                @foreach (Genre g in item.AlbumGenre)
+                {
+                    <span>@g.GenreName *</span>
+                }
+            </td> 
+
+            <td>
+                @ViewBag.AverageAlbumRating
+            </td>
+
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.AlbumID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.AlbumID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.AlbumID })
+            </td>
+
+
+
+
+        </tr>
+
+
+    }
+
+</table>
+

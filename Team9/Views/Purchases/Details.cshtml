@@ -1,0 +1,56 @@
+﻿@model Team9.Models.PurchaseItem
+    @using Team9.Models
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+
+<div>
+    <h4>Purchase</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.PurchaseItemSong.SongName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PurchaseItemSong.SongName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PurchaseItemSong.SongArtist)
+        </dt>
+
+        <dd>
+            @foreach (Artist a in Model.PurchaseItemSong.SongArtist)
+            {
+                <span>@a.ArtistName *</span>
+            }
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PurchaseItemSong.SongGenre)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PurchaseItemSong.SongGenre)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PurchaseItemPrice )
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PurchaseItemPrice )
+        </dd>
+
+    </dl>
+</div>
+
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.PurchaseItemID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

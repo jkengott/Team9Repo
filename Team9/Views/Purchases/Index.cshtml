@@ -1,0 +1,64 @@
+﻿@model IEnumerable<Team9.Models.PurchaseItem>
+    @using Team9.Models
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseItemSong.SongName )
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseItemSong.SongAlbum.AlbumName )
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseItemSong.SongArtist )
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseItemSong.SongGenre )
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseItemPrice )
+        </th>
+  
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.PurchaseItemSong.SongName )
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PurchaseItemSong.SongAlbum.AlbumName )
+        </td>
+        <td>
+            @foreach (Artist a in item.PurchaseItemSong.SongArtist )
+                {
+                <span>@a.ArtistName *</span>
+            }
+        </td>
+        
+        <td>
+            @Html.DisplayFor(modelItem => item.PurchaseItemSong.SongGenre )
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PurchaseItemPrice)
+        </td>
+
+
+        <td>
+            @Html.ActionLink("Details", "Details", new { id=item.PurchaseItemID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.PurchaseItemID })
+        </td>
+    </tr>
+}
+
+</table>

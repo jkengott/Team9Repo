@@ -1,0 +1,60 @@
+﻿@model IEnumerable<Team9.Models.Artist>
+    @using Team9.Models
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+@using (Html.BeginForm())
+{
+    <p class="form-group">
+        Search: @Html.TextBox("SearchString", null, new { @class = "form-control" }) <br />
+        <input type="submit" value="Search" class="btn btn-default" />
+        @Html.ActionLink("Advanced Search", "DetailedSearch", null, new { @class = "btn btn-default" })
+        @Html.ActionLink("Show All", "Index", null, new { @class = "btn btn-default" })
+    </p>
+}
+<p>Displaying @ViewBag.SelectedArtistCount of @ViewBag.TotalArtistCount</p>
+
+<table class="table">
+    <tr>
+        <th>
+            Artist Name
+        </th>
+        <th>
+            Artist Genre
+        </th>
+        <th>
+            Artist Rating
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.ActionLink(item.ArtistName, "Details", new { id = item.ArtistID })
+            @*@Html.DisplayFor(modelItem => item.ArtistName)*@
+        </td>
+        <td>
+            @foreach (Genre g in item.ArtistGenre)
+            {
+                <span>@g.GenreName *</span>
+            }
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ArtistRatings)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.ArtistID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.ArtistID })
+        </td>
+    </tr>
+}
+
+</table>

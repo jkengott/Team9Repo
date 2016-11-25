@@ -1,0 +1,115 @@
+﻿@model Team9.Models.Album
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Album</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.AlbumName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AlbumName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AlbumPrice)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AlbumPrice)
+        </dd>
+
+        <dt>
+            Average Rating
+        </dt>
+
+        <dd>
+            @ViewBag.AverageAlbumRating
+        </dd>
+
+    </dl>
+</div>
+
+<div>
+    <table class="table table-bordered">
+        <tr>
+            <th>
+                Album Artist(s)
+            </th>
+        </tr>
+        @foreach (var item in Model.AlbumArtist)
+        {
+            <tr>
+                <td>@Html.ActionLink(item.ArtistName, "Details", "Artists", new { Id = item.ArtistID }, null)</td>                
+            </tr>
+        }
+
+    </table>
+</div>
+
+<div>
+    <table class="table table-bordered">
+        <tr>
+            <th>
+                 Album Genre
+            </th>
+        </tr>
+        @foreach (var item in Model.AlbumGenre)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.GenreName)</td>
+
+            </tr>
+        }
+    </table>
+</div>
+
+<div>
+    <table class="table table-bordered">
+        <tr>
+            <th>
+                Album Songs
+            </th>
+        </tr>
+        @foreach (var item in Model.Songs)
+        {
+            <tr>
+                <td>@Html.ActionLink(item.SongName, "Details", "Songs", new { Id = item.SongID }, null)</td>
+            </tr>
+        }
+    </table>
+</div>
+
+<div>
+    <table class="table table-bordered">
+        <tr>
+            <th>
+                Album Comments
+            </th>
+        </tr>
+        @foreach (var item in Model.AlbumRatings)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.RatingText)</td>
+
+            </tr>
+        }
+    </table>
+</div>
+
+<div>
+    @Html.ActionLink("Add to Cart", "addAlbumToCart", new { id = Model.AlbumID }, new { @class = "btn btn-success" })
+</div>
+
+
+<p>
+    @Html.ActionLink("Add To Cart", "Create", "PurchaseItems", new { id = Model.AlbumID }, null) |
+    @Html.ActionLink("Review Album", "ReviewAlbum", "Albums", new { id = Model.AlbumID }, null)
+</p>

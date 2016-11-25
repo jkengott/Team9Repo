@@ -1,0 +1,61 @@
+﻿@model Team9.Models.PurchaseItem
+    @using Team9.Models
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Purchase</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.PurchaseItemSong.SongName )
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PurchaseItemSong.SongName )
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PurchaseItemSong.SongArtist )
+        </dt>
+
+        <dd>
+            @foreach (Artist a in Model.PurchaseItemSong.SongArtist)
+            {
+                <span>@a.ArtistName *</span>
+            }
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PurchaseItemSong.SongGenre)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PurchaseItemSong.SongGenre )
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PurchaseItemSong.SongPrice )
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PurchaseItemSong.SongPrice )
+        </dd>
+
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

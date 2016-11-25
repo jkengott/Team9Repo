@@ -1,0 +1,102 @@
+﻿@model Team9.Models.Artist
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Artist</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            Artist Name
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ArtistName)
+        </dd>
+        <dt>
+            Average Rating
+        </dt>
+
+        <dd>
+            @ViewBag.AverageArtistRating
+        </dd>
+
+    </dl>
+</div>
+<div>
+    <table class="table table-bordered">
+        <tr>
+            <th>
+                Artist Genre
+            </th>
+        </tr>
+        @foreach (var item in Model.ArtistGenre)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.GenreName)</td>
+            </tr>
+        }
+    </table>
+</div>
+<div>
+    <table class="table table-bordered">
+        <tr>
+            <th>
+                Artist Song(s)
+            </th>
+        </tr>
+        @foreach (var item in Model.Songs)
+        {
+            <tr>
+                <td>@Html.ActionLink(item.SongName, "Details", "Songs", new { id = item.SongID }, null)</td>
+            </tr>
+        }
+    </table>
+</div>
+
+<div>
+    <table class="table table-bordered">
+        <tr>
+            <th>
+                Artist Album(s)
+            </th>
+        </tr>      
+        @foreach (var item in Model.ArtistAlbums)
+        {
+            <tr>
+                <td>@Html.ActionLink(item.AlbumName, "Details", "Albums", new { id = item.AlbumID }, null)</td>
+            </tr>
+        }
+    </table>
+</div>
+
+
+<div>
+    <table class="table table-bordered">
+        <tr>
+            <th>
+                Artist Rating
+            </th>
+            <th>
+                Artist Comments
+            </th>
+        </tr>
+        @foreach (var item in Model.ArtistRatings)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.RatingValue)</td>
+                <td>@Html.DisplayFor(modelItem => item.RatingText)</td>
+
+            </tr>
+        }
+    </table>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ArtistID }) |
+    @Html.ActionLink("Back to List", "Index") |
+    @Html.ActionLink("Review Artist", "ReviewArtist", "Artists", new { id = Model.ArtistID }, null)
+</p>
