@@ -416,13 +416,17 @@ namespace Team9.Controllers
             var query = from g in db.Genres
                         orderby g.GenreName
                         select g;
+
+            //convert to list
             List<Genre> GenreList = query.ToList();
 
             //Add in choice for not selecting a frequency
             Genre NoChoice = new Genre() { GenreID = 0, GenreName = "All Genres" };
             GenreList.Add(NoChoice);
 
+            //convert to multiselect
             MultiSelectList AllGenres = new MultiSelectList(GenreList.OrderBy(g => g.GenreName), "GenreID", "GenreName");
+
             return AllGenres;
         }
     }
