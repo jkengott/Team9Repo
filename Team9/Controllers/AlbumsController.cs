@@ -11,6 +11,7 @@ using Microsoft.AspNet.Identity;
 
 namespace Team9.Controllers
 {
+    public enum SortOrder { ascending, descending }
 
     public class AlbumsController : Controller
     {
@@ -66,6 +67,7 @@ namespace Team9.Controllers
         // GET: Albums
         public ActionResult Index(string AlbumString)
         {
+
             var query = from a in db.Albums
                         select a;
 
@@ -80,7 +82,8 @@ namespace Team9.Controllers
 
             if (AlbumString == null || AlbumString == "") // they didn't select anything
             {
-                return View(db.Albums.ToList());
+                SelectedAlbums = db.Albums.ToList();
+
             }
             else //they picked something
             {
@@ -92,10 +95,26 @@ namespace Team9.Controllers
 
                 //order the record to display sorted by lastname, first name, average sales
                 SelectedAlbums.OrderBy(a => a.AlbumName).ThenBy(a => a.AlbumPrice);
-                return View(SelectedAlbums);
             }
 
+            List<AlbumIndexViewModel> AlbumsDisplay = new List<AlbumIndexViewModel>();
+
+            foreach (Album a in SelectedAlbums)
+            {
+                AlbumIndexViewModel AVM = new AlbumIndexViewModel();
+
+                AVM.Album = a;
+
+                AVM.AlbumRating = getAverageRating(a.AlbumID);
+
+                AlbumsDisplay.Add(AVM);
+
+            }
+            return View(AlbumsDisplay);
+
+
         }
+
 
         // GET: Albums/Details/5
         public ActionResult Details(int? id)
@@ -134,30 +153,30 @@ namespace Team9.Controllers
                 //newItem.PurchaseItemPrice = song.SongPrice;
                 //foreach (Song s in album.Songs)
                 //{
-                    if (hasPurchased(album.AlbumID))
+                if (hasPurchased(album.AlbumID))
+                {
+                    //continue;
+                    //TODO:Error message to not add song?
+                    // use a next to add all other songs that have not been added?
+                }
+                else
+                {
+                    PurchaseItem newItem = new PurchaseItem();
+                    //Check if there is a discount price
+                    if (!album.isDiscounted)
                     {
-                        //continue;
-                        //TODO:Error message to not add song?
-                        // use a next to add all other songs that have not been added?
+                        newItem.PurchaseItemPrice = album.AlbumPrice;
                     }
                     else
                     {
-                        PurchaseItem newItem = new PurchaseItem();
-                        //Check if there is a discount price
-                        if (!album.isDiscounted )
-                        {
-                            newItem.PurchaseItemPrice = album.AlbumPrice;
-                        }
-                        else
-                        {
-                            newItem.PurchaseItemPrice = album.DiscountAlbumPrice ;
-                        }
-                        newItem.PurchaseItemAlbum = album;
-                        newItem.Purchase = NewPurchase;
-                        db.PurchaseItems.Add(newItem);
-                        db.SaveChanges();
-
+                        newItem.PurchaseItemPrice = album.DiscountAlbumPrice;
                     }
+                    newItem.PurchaseItemAlbum = album;
+                    newItem.Purchase = NewPurchase;
+                    db.PurchaseItems.Add(newItem);
+                    db.SaveChanges();
+
+                }
                 //}
             }
             else
@@ -173,36 +192,32 @@ namespace Team9.Controllers
 
                 //foreach (Song s in album.Songs)
                 //{
-                    if (hasPurchased(album.AlbumID ))
+                if (hasPurchased(album.AlbumID))
+                {
+                    //TODO:Error message to not add song?
+                    // use a next to add all other songs that have not been added?
+                }
+                else
+                {
+                    PurchaseItem newItem = new PurchaseItem();
+                    //Check if discount price is null
+                    if (!album.isDiscounted)
                     {
-                        //TODO:Error message to not add song?
-                        // use a next to add all other songs that have not been added?
+                        newItem.PurchaseItemPrice = album.AlbumPrice;
                     }
                     else
                     {
-                        PurchaseItem newItem = new PurchaseItem();
-                        //Check if discount price is null
-                        if (!album.isDiscounted )
-                        {
-                            newItem.PurchaseItemPrice = album.AlbumPrice ;
-                        }
-                        else
-                        {
-                            newItem.PurchaseItemPrice = album.DiscountAlbumPrice ;
-                        }
-                        newItem.PurchaseItemAlbum = album;
-                        newItem.Purchase = NewPurchase;
-                        db.PurchaseItems.Add(newItem);
-                        db.SaveChanges();
+                        newItem.PurchaseItemPrice = album.DiscountAlbumPrice;
                     }
+                    newItem.PurchaseItemAlbum = album;
+                    newItem.Purchase = NewPurchase;
+                    db.PurchaseItems.Add(newItem);
+                    db.SaveChanges();
+                }
                 //}
             }
             return RedirectToAction("Index", "Purchases");
         }
-
-
-
-
 
 
         // GET: Albums/Create
@@ -299,5 +314,116 @@ namespace Team9.Controllers
             return View();
         }
 
+        public ActionResult AlbumSearchResults(string AlbumSearchString, string RatingString, SortOrder SelectedBounds, int[] SelectedGenre)
+        {
+            var query = from a in db.Albums
+                        select a;
+
+
+
+            if (AlbumSearchString == null || AlbumSearchString == "") //they didn't select anything
+            {
+                ViewBag.AlbumSearchString = "Search String was null";
+            }
+            else //they picked something up
+            {
+                ViewBag.AlbunSearchString = "The search string is" + AlbumSearchString;
+                query = query.Where(a => a.AlbumName.Contains(AlbumSearchString) || a.AlbumArtist.Any(r => r.ArtistName == AlbumSearchString));
+            }
+
+            if (SelectedGenre == null || SelectedGenre.Count() == 0) //nothing was selected
+            {
+                ViewBag.SelectedGenre = "No genres were selected";
+            }
+            else
+            {
+                String strSelectedGenre = "The selected genre(s) is/are: ";
+
+                //get list of genres
+                ViewBag.AllGenres = GetAllGenres();
+
+                foreach (int GenreID in SelectedGenre)
+                {
+                    query = query.Where(s => s.AlbumGenre.Any(g => g.GenreID == GenreID));
+                }
+                ViewBag.SelectedGenre = strSelectedGenre;
+            }
+
+
+            if (RatingString != null && RatingString != "")
+            //make sure string is a valid number
+            {
+                Decimal decRating;
+                try
+                {
+                    decRating = Convert.ToDecimal(RatingString);
+
+                }
+                catch // this code will disolay when something is wrong
+                {
+                    //Add a message for the viewbag
+                    ViewBag.Message = RatingString + "is not valid number. Please try again";
+
+                    //send user back to homepage
+                    return View("AlbumDetailedSearch");
+                }
+               
+                
+                List<AlbumIndexViewModel> AlbumsDisplay_descend = new List<AlbumIndexViewModel>();
+                List<AlbumIndexViewModel> AlbumsDisplay_ascend = new List<AlbumIndexViewModel>();
+                foreach (Album a in query)
+                {
+                    Decimal d = getAverageRating(a.AlbumID);
+                    if (d >= decRating)
+                    {
+                        AlbumIndexViewModel ab = new AlbumIndexViewModel();
+                        ab.Album = a;
+                        ab.AlbumRating = d;
+                        AlbumsDisplay_ascend.Add(ab);
+                    }
+                    else
+                    {
+                        AlbumIndexViewModel ab = new AlbumIndexViewModel();
+                        ab.Album = a;
+                        ab.AlbumRating = d;
+                        AlbumsDisplay_descend.Add(ab);
+                    }
+                }
+                IEnumerable<AlbumIndexViewModel> new_list_albums = AlbumsDisplay_ascend;
+                IEnumerable<AlbumIndexViewModel> new_list_albums_lt = AlbumsDisplay_descend;
+                
+
+                
+                if (SelectedBounds == SortOrder.ascending)
+                {
+                    ViewBag.SelectedSortOrder = "The records should be sorted in ascending order";
+                    return View("Index",new_list_albums);
+                }
+                else
+                {
+                    ViewBag.SelecredSortOrder = "The records should be sored in descending order";
+                    return View("Index", new_list_albums_lt);
+                }
+            }
+
+
+            return View();
+
+        }
+
+        public MultiSelectList GetAllGenres()
+        {
+            var query = from g in db.Genres
+                        orderby g.GenreName
+                        select g;
+            List<Genre> GenreList = query.ToList();
+
+            //Add in choice for not selecting a frequency
+            Genre NoChoice = new Genre() { GenreID = 0, GenreName = "All Genres" };
+            GenreList.Add(NoChoice);
+
+            MultiSelectList AllGenres = new MultiSelectList(GenreList.OrderBy(g => g.GenreName), "GenreID", "GenreName");
+            return AllGenres;
+        }
     }
 }

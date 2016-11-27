@@ -239,6 +239,7 @@
     <Compile Include="Models\Genre.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\IdentityRoles.cs" />
+    <Compile Include="Models\IndexViewModel.cs" />
     <Compile Include="Models\Purchase.cs" />
     <Compile Include="Models\PurchaseItem.cs" />
     <Compile Include="Models\Rating.cs" />
