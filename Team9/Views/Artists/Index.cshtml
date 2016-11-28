@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Team9.Models.Artist>
+﻿@model IEnumerable<Team9.Models.ArtistIndexViewModel>
     @using Team9.Models
 
 @{
@@ -35,24 +35,24 @@
         </th>
     </tr>
 
-@foreach (var item in Model) {
+@foreach (var item in Model)
+{
     <tr>
         <td>
-            @Html.ActionLink(item.ArtistName, "Details", new { id = item.ArtistID })
-            @*@Html.DisplayFor(modelItem => item.ArtistName)*@
+            @Html.ActionLink(item.Artist.ArtistName, "Details", new { id = item.Artist.ArtistID })
         </td>
         <td>
-            @foreach (Genre g in item.ArtistGenre)
+            @foreach (Genre g in item.Artist.ArtistGenre)
             {
                 <span>@g.GenreName *</span>
             }
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.ArtistRatings)
+            @Html.DisplayFor(modelItem => item.ArtistRating)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.ArtistID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.ArtistID })
+            @Html.ActionLink("Edit", "Edit", new { id=item.Artist.ArtistID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Artist.ArtistID })
         </td>
     </tr>
 }

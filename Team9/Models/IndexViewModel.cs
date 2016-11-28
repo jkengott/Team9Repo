@@ -16,5 +16,19 @@ namespace Team9.Models
 
 
 
+
+    }
+
+    public class ArtistIndexViewModel
+    {
+
+        public Artist Artist { get; set; }
+
+        public Decimal ArtistRating { get; set; }
+
+
+
+
+
     }
 }

@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Team9.Models;
+using Microsoft.AspNet.Identity;
 
 namespace Team9.Controllers
 {
@@ -23,6 +24,9 @@ namespace Team9.Controllers
         // GET: Artists
         public ActionResult Index(string SearchString)
         {
+            var query = from a in db.Artists
+                        select a;
+
             //create a view bag to store the number of selected customers
             ViewBag.TotalArtistCount = db.Artists.Count();
 
@@ -51,9 +55,27 @@ namespace Team9.Controllers
                 //TODO: Order by avg rating when we figure that out
                 SelectedArtists.OrderBy(c => c.ArtistName);
                 //return view with selected artists
-                return View(SelectedArtists);
+                //return View(SelectedArtists);
             }
+
+
+            //Add average rating to index
+            List<ArtistIndexViewModel> ArtistDisplay = new List<ArtistIndexViewModel>();
+
+            foreach (Artist a in SelectedArtists)
+            {
+                ArtistIndexViewModel AVM = new ArtistIndexViewModel();
+
+                AVM.Artist = a;
+
+                AVM.ArtistRating = getAverageRating(a.ArtistID);
+
+                ArtistDisplay.Add(AVM);
+
+            }
+            return View(ArtistDisplay);
         }
+
         public ActionResult DetailedSearch()
         {
             ViewBag.AllGenres = GetAllGenres();
