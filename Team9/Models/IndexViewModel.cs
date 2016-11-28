@@ -24,4 +24,13 @@ namespace Team9.Models
         public Decimal ArtistRating { get; set; }
 
     }
+
+    public class SongIndexViewModel
+    {
+
+        public Song Song { get; set; }
+
+        public Decimal SongRating { get; set; }
+
+    }
 }

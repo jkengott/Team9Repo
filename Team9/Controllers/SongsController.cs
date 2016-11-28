@@ -92,9 +92,52 @@ namespace Team9.Controllers
         }
 
         // GET: Songs
-        public ActionResult Index()
+        public ActionResult Index(string SongString)
         {
-            return View(db.Songs.ToList());
+            var query = from a in db.Songs
+                        select a;
+
+            // Create a list of selected albums
+            List<Song> SelectedSongs = new List<Song>();
+
+            //Create a view bag to store the number of selected albums
+            ViewBag.TotalSongCount = db.Songs.Count();
+
+            //Create selected count of customers
+            ViewBag.SelectedSongCount = db.Songs.Count();
+
+            if (SongString == null || SongString == "") // they didn't select anything
+            {
+                SelectedSongs = db.Songs.ToList();
+
+            }
+            else //they picked something
+            {
+                //use linq to display searched names
+                SelectedSongs = db.Songs.Where(a => a.SongName.Contains(SongString) || a.SongArtist.Any(r => r.ArtistName == SongString)).ToList();
+
+                //Create selected count of customers
+                ViewBag.SelectedSongCount = SelectedSongs.Count();
+
+                //order the record to display sorted by lastname, first name, average sales
+                SelectedSongs.OrderBy(a => a.SongName).ThenBy(a => a.SongPrice);
+            }
+
+            List<SongIndexViewModel> SongsDisplay = new List<SongIndexViewModel>();
+
+            foreach (Song a in SelectedSongs)
+            {
+                SongIndexViewModel AVM = new SongIndexViewModel();
+
+                AVM.Song = a;
+
+                AVM.SongRating = getAverageRating(a.SongID);
+
+                SongsDisplay.Add(AVM);
+
+            }
+
+            return View(SongsDisplay);
         }
 
         // GET: Songs/Details/5
