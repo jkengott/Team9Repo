@@ -327,6 +327,21 @@ namespace Team9.Controllers
             return RedirectToAction("Index");
         }
 
+        // GET: Songs/ReviewSong/5
+        public ActionResult ReviewSong(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Song song = db.Songs.Find(id);
+            if (song == null)
+            {
+                return HttpNotFound();
+            }
+            return View(song);
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

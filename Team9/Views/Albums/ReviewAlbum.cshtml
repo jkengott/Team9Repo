@@ -1,0 +1,78 @@
+﻿@model Team9.Models.Album
+@{
+    ViewBag.Title = "ReviewAlbum";
+}
+
+<h2>ReviewAlbum</h2>
+
+<h2>Review @Html.DisplayFor(model => model.AlbumName)</h2>
+
+@using (Html.BeginForm("Create", "Ratings"))
+{
+    <div>
+        <hr />
+        <dl>
+            <dt>
+                Rating
+            </dt>
+            <dd>
+                <label class="form-check-label">
+                    @Html.RadioButton("AlbumRating", new { @class = "form-check-input" })  1
+                </label>
+            </dd>
+            <dd>
+                <div class="form-check">
+                    <label class="form-check-label">
+                        @Html.RadioButton("AlbumRating", new { @class = "form-check-input" })  2
+                    </label>
+                </div>
+            </dd>
+            <dd>
+                <div class="form-check">
+                    <label class="form-check-label">
+                        @Html.RadioButton("AlbumRating", new { @class = "form-check-input" })  3
+                    </label>
+                </div>
+            </dd>
+            <dd>
+                <div class="form-check">
+                    <label class="form-check-label">
+                        @Html.RadioButton("AlbumRating", new { @class = "form-check-input" })  4
+                    </label>
+                </div>
+            </dd>
+            <dd>
+                <div class="form-check">
+                    <label class="form-check-label">
+                        @Html.RadioButton("AlbumRating", new { @class = "form-check-input" })  5
+
+
+                    </label>
+                </div>
+            </dd>
+        </dl>
+        <hr />
+        <dl>
+            <dt>
+                Comments
+            </dt>
+            <dd>
+                @Html.TextArea("Comments", null, new { @class = "form-control" }) <br />
+            </dd>
+        </dl>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Commit" class="btn btn-default" />
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to Album", "Details", new { id = Model.AlbumID })
+</div>
+
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>

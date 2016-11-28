@@ -52,7 +52,7 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Song.SongName)
+            @Html.ActionLink(item.Song.SongName, "Details", new { id = item.Song.SongID })
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Song.SongPrice)
@@ -76,7 +76,6 @@
 
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.Song.SongID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Song.SongID }) |
             @Html.ActionLink("Delete", "Delete", new { id=item.Song.SongID })
         </td>
     </tr>

@@ -300,6 +300,21 @@ namespace Team9.Controllers
             return RedirectToAction("Index");
         }
 
+        // GET: Album/ReviewArtist/5
+        public ActionResult ReviewAlbum(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Album album = db.Albums.Find(id);
+            if (album == null)
+            {
+                return HttpNotFound();
+            }
+            return View(album);
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

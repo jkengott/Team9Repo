@@ -48,7 +48,7 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Album.AlbumName)
+                    @Html.ActionLink(item.Album.AlbumName, "Details", new { id = item.Album.AlbumID })
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Album.AlbumPrice)
@@ -74,7 +74,6 @@
 
                 <td>
                     @Html.ActionLink("Edit", "Edit", new { id = item.Album.AlbumID }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.Album.AlbumID }) |
                     @Html.ActionLink("Delete", "Delete", new { id = item.Album.AlbumID })
                 </td>
 

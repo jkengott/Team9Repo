@@ -102,7 +102,12 @@
 <div>
     @Html.ActionLink("Add to Cart", "addSongToCart", new { id = Model.SongID }, new { @class = "btn btn-success" })
 </div>
-<p>
+@*<p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.SongID }) |
     @Html.ActionLink("Back to List", "Index")
+</p>*@
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.SongID }) |
+    @Html.ActionLink("Back to List", "Index") |
+    @Html.ActionLink("Review Song", "ReviewSong", "Songs", new { id = Model.SongID }, null)
 </p>

@@ -91,12 +91,16 @@
     <table class="table table-bordered">
         <tr>
             <th>
+                Album Rating
+            </th>
+            <th>
                 Album Comments
             </th>
         </tr>
         @foreach (var item in Model.AlbumRatings)
         {
             <tr>
+                <td>@Html.DisplayFor(modelItem => item.RatingValue)</td>
                 <td>@Html.DisplayFor(modelItem => item.RatingText)</td>
 
             </tr>
@@ -109,7 +113,12 @@
 </div>
 
 
-<p>
+@*<p>
     @Html.ActionLink("Add To Cart", "Create", "PurchaseItems", new { id = Model.AlbumID }, null) |
+    @Html.ActionLink("Review Album", "ReviewAlbum", "Albums", new { id = Model.AlbumID }, null)
+</p>*@
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.AlbumID }) |
+    @Html.ActionLink("Back to List", "Index") |
     @Html.ActionLink("Review Album", "ReviewAlbum", "Albums", new { id = Model.AlbumID }, null)
 </p>

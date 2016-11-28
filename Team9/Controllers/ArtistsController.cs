@@ -253,6 +253,19 @@ namespace Team9.Controllers
         // POST: Artists/ReviewArtist/5
         //TODO: creat the post method
         //######################################################//
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ReviewArtist([Bind(Include = "ArtistID,ArtistName")] Artist artist)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Artists.Add(artist);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            return View(artist);
+        }
 
         // gets the average rating for an artist
         public Decimal getAverageRating(int? id)
