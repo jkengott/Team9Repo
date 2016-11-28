@@ -16,20 +16,53 @@ namespace Team9.Controllers
     {
         private AppDbContext db = new AppDbContext();
 
-        public bool hasPurchased(int id)
+        public bool hasAlbums(int? id)
+        {
+            Purchase CurrentPurchase = db.Purchases.Find(id);
+            foreach(PurchaseItem pi in CurrentPurchase.PurchaseItems)
+            {
+                if(pi.isAlbum)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void checkDuplicates(int? id)
         {
             String CurrentUserId = User.Identity.GetUserId();
             var query = from p in db.Purchases
-                        join pi in db.PurchaseItems on p.PurchaseID equals pi.Purchase.PurchaseID
                         where p.isPurchased == false && p.PurchaseUser.Id == CurrentUserId
-                        select pi.PurchaseItemSong.SongID;
+                        select p;
+
+            Album currentAlbum = db.Albums.Find(id);
+            List<Purchase> CartList = query.ToList();
+            Purchase currentCart = CartList[0];
+            foreach(PurchaseItem pi in currentCart.PurchaseItems)
+            {
+                if (!pi.isAlbum)
+                {
+                    if (currentAlbum.Songs.Contains(pi.PurchaseItemSong))
+                    {
+                        db.PurchaseItems.Remove(pi);
+                        db.SaveChanges();
+                    }
+
+                }
+            }
+
+        }
+
+        public bool hasPurchased(int id)
+        {
+            String CurrentUserId = User.Identity.GetUserId();
 
             var query2 = from p in db.Purchases
                          join pi in db.PurchaseItems on p.PurchaseID equals pi.Purchase.PurchaseID
                          where p.isPurchased == false && p.PurchaseUser.Id == CurrentUserId
                          select pi.PurchaseItemAlbum.AlbumID;
 
-            List<Int32> SongIDs = query.ToList();
             List<Int32> AlbumIDs = query2.ToList();
             //List<Int32> AlbumSongs = new List<Int32>();
             if (AlbumIDs.Contains(id))
@@ -134,6 +167,8 @@ namespace Team9.Controllers
                 //newItem.PurchaseItemPrice = song.SongPrice;
                 //foreach (Song s in album.Songs)
                 //{
+                if (hasAlbums(NewPurchase.PurchaseID))
+                {
                     if (hasPurchased(album.AlbumID))
                     {
                         //continue;
@@ -144,22 +179,46 @@ namespace Team9.Controllers
                     {
                         PurchaseItem newItem = new PurchaseItem();
                         //Check if there is a discount price
-                        if (!album.isDiscounted )
+
+                        if (!album.isDiscounted)
                         {
                             newItem.PurchaseItemPrice = album.AlbumPrice;
                         }
                         else
                         {
-                            newItem.PurchaseItemPrice = album.DiscountAlbumPrice ;
+                            newItem.PurchaseItemPrice = album.DiscountAlbumPrice;
                         }
+                        //checkDuplicates(album.AlbumID);
                         newItem.PurchaseItemAlbum = album;
+                        newItem.isAlbum = true;
                         newItem.Purchase = NewPurchase;
                         db.PurchaseItems.Add(newItem);
                         db.SaveChanges();
-
                     }
-                //}
+                }
+                else
+                {
+                    PurchaseItem newItem = new PurchaseItem();
+                    //Check if there is a discount price
+
+                    if (!album.isDiscounted)
+                    {
+                        newItem.PurchaseItemPrice = album.AlbumPrice;
+                    }
+                    else
+                    {
+                        newItem.PurchaseItemPrice = album.DiscountAlbumPrice;
+                    }
+                    //checkDuplicates(album.AlbumID);
+                    newItem.PurchaseItemAlbum = album;
+                    newItem.isAlbum = true;
+                    newItem.Purchase = NewPurchase;
+                    db.PurchaseItems.Add(newItem);
+                    db.SaveChanges();
+                }
             }
+
+            //}
             else
             {
                 NewPurchase.PurchaseUser = db.Users.Find(CurrentUserId);
@@ -173,32 +232,25 @@ namespace Team9.Controllers
 
                 //foreach (Song s in album.Songs)
                 //{
-                    if (hasPurchased(album.AlbumID ))
-                    {
-                        //TODO:Error message to not add song?
-                        // use a next to add all other songs that have not been added?
-                    }
-                    else
-                    {
-                        PurchaseItem newItem = new PurchaseItem();
-                        //Check if discount price is null
-                        if (!album.isDiscounted )
-                        {
-                            newItem.PurchaseItemPrice = album.AlbumPrice ;
-                        }
-                        else
-                        {
-                            newItem.PurchaseItemPrice = album.DiscountAlbumPrice ;
-                        }
-                        newItem.PurchaseItemAlbum = album;
-                        newItem.Purchase = NewPurchase;
-                        db.PurchaseItems.Add(newItem);
-                        db.SaveChanges();
-                    }
+                PurchaseItem newItem = new PurchaseItem();
+                //Check if discount price is null
+                if (!album.isDiscounted)
+                {
+                    newItem.PurchaseItemPrice = album.AlbumPrice;
+                }
+                else
+                {
+                    newItem.PurchaseItemPrice = album.DiscountAlbumPrice;
+                }
+                newItem.PurchaseItemAlbum = album;
+                newItem.Purchase = NewPurchase;
+                newItem.isAlbum = true;
+                db.PurchaseItems.Add(newItem);
+                db.SaveChanges();
                 //}
             }
-            return RedirectToAction("Index", "Purchases");
-        }
+                return RedirectToAction("Index", "Purchases");
+            } 
 
 
 

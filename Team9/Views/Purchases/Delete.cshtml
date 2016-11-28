@@ -13,40 +13,77 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.PurchaseItemSong.SongName )
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.PurchaseItemSong.SongName )
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.PurchaseItemSong.SongArtist )
-        </dt>
-
-        <dd>
-            @foreach (Artist a in Model.PurchaseItemSong.SongArtist)
+            @if (!Model.isAlbum)
             {
-                <span>@a.ArtistName *</span>
+                Html.DisplayNameFor(model => model.PurchaseItemSong.SongName);
+            }
+            else
+            {
+                Html.DisplayNameFor(model => model.PurchaseItemAlbum.AlbumName);
+            }
+        </dt>
+        <dd>
+            @if (!Model.isAlbum)
+            {
+                Html.DisplayFor(model => model.PurchaseItemSong.SongName);
+            }
+            else
+            {
+                Html.DisplayFor(model => model.PurchaseItemAlbum.AlbumName);
             }
         </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.PurchaseItemSong.SongGenre)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.PurchaseItemSong.SongGenre )
-        </dd>
 
         <dt>
-            @Html.DisplayNameFor(model => model.PurchaseItemSong.SongPrice )
+            @if (!Model.isAlbum)
+            {
+                if (Model.PurchaseItemSong.isDiscoutned)
+                {
+                    Html.DisplayNameFor(model => model.PurchaseItemSong.DiscountPrice);
+                }
+                else
+                {
+                    Html.DisplayNameFor(model => model.PurchaseItemSong.SongPrice);
+                }
+            }
+            else
+            {
+                if(Model.PurchaseItemAlbum.isDiscounted)
+                {
+                    Html.DisplayNameFor(model => model.PurchaseItemAlbum.DiscountAlbumPrice);
+                }
+                else
+                {
+                    Html.DisplayNameFor(model => model.PurchaseItemAlbum.AlbumPrice);
+                }
+
+            }
         </dt>
-
         <dd>
-            @Html.DisplayFor(model => model.PurchaseItemSong.SongPrice )
-        </dd>
+            @if (!Model.isAlbum)
+            {
+                if (Model.PurchaseItemSong.isDiscoutned)
+                {
+                    Html.DisplayFor(model => model.PurchaseItemSong.DiscountPrice);
+                }
+                else
+                {
+                    Html.DisplayFor(model => model.PurchaseItemSong.SongPrice);
+                }
+            }
+            else
+            {
+                if (Model.PurchaseItemAlbum.isDiscounted)
+                {
+                    Html.DisplayFor(model => model.PurchaseItemAlbum.DiscountAlbumPrice);
+                }
+                else
+                {
+                    Html.DisplayFor(model => model.PurchaseItemAlbum.AlbumPrice);
+                }
 
+            }
+        </dd>
 
     </dl>
 

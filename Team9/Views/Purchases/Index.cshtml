@@ -7,9 +7,17 @@
 
 <h2>Index</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+<h2>Songs</h2>
+
+@if (ViewBag.DuplicateMessage != null)
+{
+    <div class="alert alert-warning">
+        <strong>
+            @ViewBag.DuplicateMessage
+        </strong>
+    </div>
+}
+
 <table class="table">
     <tr>
         <th>
@@ -31,34 +39,127 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
+@foreach (var item in Model)
+{
+    if (!item.isAlbum)
+    {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.PurchaseItemSong.SongName )
+            @Html.DisplayFor(modelItem => item.PurchaseItemSong.SongName)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.PurchaseItemSong.SongAlbum.AlbumName )
+            @Html.DisplayFor(modelItem => item.PurchaseItemSong.SongAlbum.AlbumName)
         </td>
         <td>
-            @foreach (Artist a in item.PurchaseItemSong.SongArtist )
-                {
+            @foreach (Artist a in item.PurchaseItemSong.SongArtist)
+            {
                 <span>@a.ArtistName *</span>
             }
         </td>
         
         <td>
-            @Html.DisplayFor(modelItem => item.PurchaseItemSong.SongGenre )
+            @Html.DisplayFor(modelItem => item.PurchaseItemSong.SongGenre)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.PurchaseItemPrice)
         </td>
 
-
         <td>
-            @Html.ActionLink("Details", "Details", new { id=item.PurchaseItemID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.PurchaseItemID })
+            @Html.ActionLink("Delete", "Delete", new { id = item.PurchaseItemID })
         </td>
     </tr>
+    }
 }
 
 </table>
+
+
+
+<h2>Albums</h2>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseItemAlbum.AlbumName )
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseItemAlbum.AlbumArtist )
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseItemAlbum.AlbumGenre)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseItemAlbum.AlbumPrice)
+        </th>
+
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        if (item.isAlbum)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.PurchaseItemAlbum.AlbumName)
+            </td>
+            <td>
+                @foreach (Artist a in item.PurchaseItemAlbum.AlbumArtist)
+                {
+                    <span>@a.ArtistName *</span>
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PurchaseItemAlbum.AlbumGenre )
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.PurchaseItemAlbum.AlbumPrice)
+            </td>
+
+            <td>
+                @Html.ActionLink("Delete", "Delete", new { id = item.PurchaseItemID })
+            </td>
+        </tr>
+        }
+    }
+
+</table>
+    @if (Model.Count() > 0)
+    {
+        <div>
+            @Html.ActionLink("Proceed to Checkout", "Details", "Purchases", new { id = Model.First().Purchase.PurchaseID }, new { @class = "btn btn-success" })
+        </div>
+    }
+
+<dt>
+    SubTotal:
+</dt>
+
+<dd>
+    @ViewBag.subtotal
+</dd>
+
+@if (ViewBag.discountSubtotal == "-1")
+{
+    <dt>
+        Discount SubTotal:
+    </dt>
+
+    <dd>
+        @ViewBag.discountSubtotal.
+    </dd>
+}
+<dt>
+    Tax (8.5%)
+</dt>
+
+<dd>
+    @ViewBag.taxTotal
+</dd>
+
+<dt>
+    Grand Total:
+</dt>
+<dd>
+    @ViewBag.grandTotal
+</dd>

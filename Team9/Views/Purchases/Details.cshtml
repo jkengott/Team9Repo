@@ -1,56 +1,51 @@
-﻿@model Team9.Models.PurchaseItem
+﻿@model Team9.Models.Purchase
     @using Team9.Models
 
 @{
     ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
-
+<h2>Checkout</h2>
 
 <div>
-    <h4>Purchase</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.PurchaseItemSong.SongName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.PurchaseItemSong.SongName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.PurchaseItemSong.SongArtist)
-        </dt>
-
-        <dd>
-            @foreach (Artist a in Model.PurchaseItemSong.SongArtist)
-            {
-                <span>@a.ArtistName *</span>
-            }
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.PurchaseItemSong.SongGenre)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.PurchaseItemSong.SongGenre)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.PurchaseItemPrice )
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.PurchaseItemPrice )
-        </dd>
-
-    </dl>
+    <dt>SubTotal:</dt>
+    <dd> @ViewBag.subtotal</dd>
 </div>
 
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.PurchaseItemID }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+@if (ViewBag.discountSubtotal == "-1")
+{
+    <div>
+        <dt>Discount SubTotal:</dt>
+        <dd> @ViewBag.discountSubtotal</dd>
+    </div>
+}
+<dt>
+    Tax (8.5%)
+</dt>
+
+<dd>
+    @ViewBag.taxTotal
+</dd>
+
+<dt>
+    Grand Total:
+</dt>
+<dd>
+    @ViewBag.grandTotal
+</dd>
+
+<div class="form-group">
+    <label class="control-label col-md-2">SelectCreditCard</label>
+    <div class="col-md-10">
+        @Html.DropDownList("CreditCardId", (SelectList)ViewBag.SelectCreditCards, new { @class = "form-control" })
+    </div>
+</div>
+
+<div class="form-group">
+    @Html.LabelFor(m => m.PurchaseUser.CreditCard2, new { @class = "col-md-2 control-label" })
+    <div class="col-md-10">
+        @Html.TextBoxFor(m => m.PurchaseUser.CreditCard2, new { @class = "form-control" })
+    </div>
+</div>
+
+
