@@ -233,12 +233,17 @@
     <Compile Include="Migrations\201611251606484_Team9.2.Designer.cs">
       <DependentUpon>201611251606484_Team9.2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201611272324493_Team9.3.cs" />
+    <Compile Include="Migrations\201611272324493_Team9.3.Designer.cs">
+      <DependentUpon>201611272324493_Team9.3.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Album.cs" />
     <Compile Include="Models\Artist.cs" />
     <Compile Include="Models\Genre.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\IdentityRoles.cs" />
+    <Compile Include="Models\IndexViewModel.cs" />
     <Compile Include="Models\Purchase.cs" />
     <Compile Include="Models\PurchaseItem.cs" />
     <Compile Include="Models\Rating.cs" />
@@ -267,6 +272,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201611251606484_Team9.2.resx">
       <DependentUpon>201611251606484_Team9.2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611272324493_Team9.3.resx">
+      <DependentUpon>201611272324493_Team9.3.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
