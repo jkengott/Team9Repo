@@ -39,7 +39,7 @@ namespace Team9.Controllers
 
             if (SearchString == null || SearchString == "") //didnt select anything
             {
-                return View(db.Artists.ToList());
+                SelectedArtists = db.Artists.ToList();
             }
             else //something was picked
             {

@@ -13,11 +13,8 @@ namespace Team9.Models
 
         public Decimal AlbumRating { get; set; }
 
-
-
-
-
     }
+
 
     public class ArtistIndexViewModel
     {
@@ -25,10 +22,6 @@ namespace Team9.Models
         public Artist Artist { get; set; }
 
         public Decimal ArtistRating { get; set; }
-
-
-
-
 
     }
 }
