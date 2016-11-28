@@ -50,8 +50,7 @@ namespace Team9.Controllers
         {
             Album RatedAlbum;
             if (ModelState.IsValid)
-            {
-                
+            {                
                 db.Ratings.Add(rating);
                 db.SaveChanges();
                 return RedirectToAction("Index");

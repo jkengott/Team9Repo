@@ -319,14 +319,11 @@ namespace Team9.Controllers
         //######################################################//
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ReviewArtist([Bind(Include = "ArtistID,ArtistName")] Rating rating,
-           Int32 ArtistRating, String Comments)
+        public ActionResult ReviewArtist([Bind(Include = "RatingID,RatingText,RatingValue,RatingArtist_ArtistID")]
+                                        Rating rating, int? id)
         {
             if (ModelState.IsValid)
             {
-                rating.RatingValue = ArtistRating;
-                rating.RatingText = Comments;
-                
                 db.Ratings.Add(rating);
                 db.SaveChanges();
                 return RedirectToAction("Index");

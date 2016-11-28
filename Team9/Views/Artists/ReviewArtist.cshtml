@@ -13,43 +13,41 @@
     <div>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.ArtistID)
+        @Html.HiddenFor(model => model.ArtistID, "RatingArtist_ArtistID")
         <dl>
             <dt>
                 Rating
             </dt>
             <dd>
                     <label class="form-check-label">
-                        @Html.RadioButton("ArtistRating", new { @class = "form-check-input" })  1
+                        @Html.RadioButton("RatingValue", new { @class = "form-check-input" })  1
                     </label>
             </dd>
             <dd>
                 <div class="form-check">
                     <label class="form-check-label">
-                        @Html.RadioButton("ArtistRating", new { @class = "form-check-input" })  2
-                    </label>
-                </div>
-            </dd>
-            <dd>
-                <div class="form-check">
-                    <label class="form-check-label">
-                        @Html.RadioButton("ArtistRating", new { @class = "form-check-input" })  3
+                        @Html.RadioButton("RatingValue", new { @class = "form-check-input" })  2
                     </label>
                 </div>
             </dd>
             <dd>
                 <div class="form-check">
                     <label class="form-check-label">
-                        @Html.RadioButton("ArtistRating", new { @class = "form-check-input" })  4
+                        @Html.RadioButton("RatingValue", new { @class = "form-check-input" })  3
                     </label>
                 </div>
             </dd>
             <dd>
                 <div class="form-check">
                     <label class="form-check-label">
-                        @Html.RadioButton("ArtistRating", new { @class = "form-check-input" })  5
-
-
+                        @Html.RadioButton("RatingValue", new { @class = "form-check-input" })  4
+                    </label>
+                </div>
+            </dd>
+            <dd>
+                <div class="form-check">
+                    <label class="form-check-label">
+                        @Html.RadioButton("RatingValue", new { @class = "form-check-input" })  5
                     </label>
                 </div>
             </dd>
@@ -60,7 +58,7 @@
                 Comments
             </dt>
             <dd>
-                @Html.TextArea("Comments", null, new { @class = "form-control" }) <br />
+                @Html.TextArea("RatingText", null, new { @class = "form-control" }) <br />
             </dd>
         </dl>
     </div>
