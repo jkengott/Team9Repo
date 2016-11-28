@@ -255,16 +255,20 @@ namespace Team9.Controllers
         //######################################################//
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ReviewArtist([Bind(Include = "ArtistID,ArtistName")] Artist artist)
+        public ActionResult ReviewArtist([Bind(Include = "ArtistID,ArtistName")] Rating rating,
+           Int32 ArtistRating, String Comments)
         {
             if (ModelState.IsValid)
             {
-                db.Artists.Add(artist);
+                rating.RatingValue = ArtistRating;
+                rating.RatingText = Comments;
+                
+                db.Ratings.Add(rating);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(artist);
+            return View(rating);
         }
 
         // gets the average rating for an artist
