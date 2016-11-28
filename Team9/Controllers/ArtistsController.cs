@@ -11,6 +11,7 @@ using Microsoft.AspNet.Identity;
 
 namespace Team9.Controllers
 {
+
     public class ArtistsController : Controller
     {
         private AppDbContext db = new AppDbContext();
@@ -76,44 +77,107 @@ namespace Team9.Controllers
             return View(ArtistDisplay);
         }
 
-        public ActionResult DetailedSearch()
+        public ActionResult ArtistDetailedSearch()
         {
-            ViewBag.AllGenres = GetAllGenres();
+            ViewBag.SelectedGenre = GetAllGenres();
             return View();
         }
 
         //Detailed search results
-        public ActionResult SearchResults(String NameString, Int32 SelectedGenre)
+        public ActionResult ArtistSearchResults(string ArtistSearchString, string RatingString, SortOrder SelectedBounds, int[] SelectedGenre)
         {
-            //create a new db set of customers for searching
             var query = from a in db.Artists
                         select a;
 
-            //NameString is from the name search
-            if (NameString != null || NameString != "") //Something was actually inputed
+
+            if (ArtistSearchString == null || ArtistSearchString == "") //they didn't select anything
             {
-                query = query.Where(a => a.ArtistName.Contains(NameString));
+                ViewBag.ArtistSearchString = "Search String was null";
+            }
+            else //they picked something up
+            {
+                ViewBag.ArtistSearchString = "The search string is" + ArtistSearchString;
+                query = query.Where(a => a.ArtistName.Contains(ArtistSearchString));
             }
 
-            //one was chosen
-            if (SelectedGenre != 0)
+            if (SelectedGenre == null || SelectedGenre.Count() == 0) //nothing was selected
             {
+                ViewBag.SelectedGenre = "No genres were selected";
+            }
+            else
+            {
+                String strSelectedGenre = "The selected genre(s) is/are: ";
+
+                //get list of genres
                 ViewBag.AllGenres = GetAllGenres();
 
+                foreach (int GenreID in SelectedGenre)
+                {
+                    query = query.Where(s => s.ArtistGenre.Any(g => g.GenreID == GenreID));
+                }
+                ViewBag.SelectedGenre = strSelectedGenre;
             }
 
 
+            if (RatingString != null && RatingString != "")
+            //make sure string is a valid number
+            {
+                Decimal decRating;
+                try
+                {
+                    decRating = Convert.ToDecimal(RatingString);
+
+                }
+                catch // this code will disolay when something is wrong
+                {
+                    //Add a message for the viewbag
+                    ViewBag.Message = RatingString + "is not valid number. Please try again";
+
+                    //send user back to homepage
+                    return View("ArtistDetailedSearch");
+                }
 
 
-            List<Artist> SelectedArtists = query.ToList();
+                List<ArtistIndexViewModel> ArtistsDisplay_descend = new List<ArtistIndexViewModel>();
+                List<ArtistIndexViewModel> ArtistsDisplay_ascend = new List<ArtistIndexViewModel>();
+                foreach (Artist a in query)
+                {
+                    Decimal d = getAverageRating(a.ArtistID);
+                    if (d >= decRating)
+                    {
+                        ArtistIndexViewModel ab = new ArtistIndexViewModel();
+                        ab.Artist = a;
+                        ab.ArtistRating = d;
+                        ArtistsDisplay_ascend.Add(ab);
+                    }
+                    else
+                    {
+                        ArtistIndexViewModel ab = new ArtistIndexViewModel();
+                        ab.Artist = a;
+                        ab.ArtistRating = d;
+                        ArtistsDisplay_descend.Add(ab);
+                    }
+                }
+                IEnumerable<ArtistIndexViewModel> new_list_artists = ArtistsDisplay_ascend;
+                IEnumerable<ArtistIndexViewModel> new_list_artists_lt = ArtistsDisplay_descend;
 
-            //count selected customers
-            ViewBag.SelectedArtistCount = SelectedArtists.Count();
 
-            //to display total number of customers
-            ViewBag.TotalArtistCount = db.Artists.Count();
 
-            return View("Index", SelectedArtists);
+                if (SelectedBounds == SortOrder.ascending)
+                {
+                    ViewBag.SelectedSortOrder = "The records should be sorted in ascending order";
+                    return View("Index", new_list_artists);
+                }
+                else
+                {
+                    ViewBag.SelecredSortOrder = "The records should be sored in descending order";
+                    return View("Index", new_list_artists_lt);
+                }
+            }
+
+
+            return View();
+
         }
 
         // GET: Artists/Details/5
@@ -169,7 +233,7 @@ namespace Team9.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.AllGenres = GetAllGenres(@artist);
+            //ViewBag.AllGenres = GetAllGenres(@artist);
             return View(artist);
         }
 
@@ -205,7 +269,7 @@ namespace Team9.Controllers
                 return RedirectToAction("Index");
             }
             //repopulate the viewbag
-            ViewBag.AllGenres = GetAllGenres(@artist);
+            //ViewBag.AllGenres = GetAllGenres(@artist);
             return View(@artist);
         }
 
@@ -295,41 +359,24 @@ namespace Team9.Controllers
 
             return average;
         }
-        //gets all genres for drop dow list when editing
-        public MultiSelectList GetAllGenres(Artist @artist)
+
+        public MultiSelectList GetAllGenres()
         {
-            //populate list of Genres
             var query = from g in db.Genres
                         orderby g.GenreName
                         select g;
 
-            //convert to list and execute query
-            List<Genre> allGenres = query.ToList();
+            //convert to list
+            List<Genre> GenreList = query.ToList();
 
-            //create list of selected Genres
-            List<Int32> SelectedGenres = new List<Int32>();
+            //Add in choice for not selecting a frequency
+            Genre NoChoice = new Genre() { GenreID = 0, GenreName = "All Genres" };
+            GenreList.Add(NoChoice);
 
-            //Loop through list of Genres and add GenreID
-            foreach (Genre g in @artist.ArtistGenre)
-            {
-                SelectedGenres.Add(g.GenreID);
-            }
             //convert to multiselect
-            MultiSelectList allGenresList = new MultiSelectList(allGenres, "GenreID", "GenreName", SelectedGenres);
+            MultiSelectList AllGenres = new MultiSelectList(GenreList.OrderBy(g => g.GenreName), "GenreID", "GenreName");
 
-            return allGenresList;
-        }
-        //get a list of all the genres FOR DROP DOWN LIST NOT MULTISELECT LIST
-        public SelectList GetAllGenres()
-        {
-            var query = from g in db.Genres
-                        select g;
-
-            List<Genre> allGenre = query.ToList();
-
-            SelectList GenreList = new SelectList(allGenre.OrderBy(g => g.GenreName), "GenreID", "Name");
-
-            return GenreList;
+            return AllGenres;
         }
 
         protected override void Dispose(bool disposing)

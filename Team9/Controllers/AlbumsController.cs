@@ -326,6 +326,7 @@ namespace Team9.Controllers
 
         public ActionResult AlbumDetailedSearch()
         {
+            ViewBag.SelectedGenre = GetAllGenres();
             return View();
         }
 
@@ -342,7 +343,7 @@ namespace Team9.Controllers
             }
             else //they picked something up
             {
-                ViewBag.AlbunSearchString = "The search string is" + AlbumSearchString;
+                ViewBag.AlbumSearchString = "The search string is" + AlbumSearchString;
                 query = query.Where(a => a.AlbumName.Contains(AlbumSearchString) || a.AlbumArtist.Any(r => r.ArtistName == AlbumSearchString));
             }
 

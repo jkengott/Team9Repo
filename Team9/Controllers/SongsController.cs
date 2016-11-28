@@ -350,5 +350,128 @@ namespace Team9.Controllers
             }
             base.Dispose(disposing);
         }
+
+        public ActionResult SongDetailedSearch()
+        {
+            ViewBag.SelectedGenre = GetAllGenres();
+            return View();
+        }
+
+        public ActionResult SongSearchResults(string SongSearchString, string RatingString, SortOrder SelectedBounds, int[] SelectedGenre)
+        {
+            var query = from a in db.Songs
+                        select a;
+
+
+
+            if (SongSearchString == null || SongSearchString == "") //they didn't select anything
+            {
+                ViewBag.SongSearchString = "Search String was null";
+            }
+            else //they picked something up
+            {
+                ViewBag.SongSearchString = "The search string is" + SongSearchString;
+                query = query.Where(a => a.SongName.Contains(SongSearchString) || a.SongArtist.Any(r => r.ArtistName == SongSearchString));
+            }
+
+            if (SelectedGenre == null || SelectedGenre.Count() == 0) //nothing was selected
+            {
+                ViewBag.SelectedGenre = "No genres were selected";
+            }
+            else
+            {
+                String strSelectedGenre = "The selected genre(s) is/are: ";
+
+                //get list of genres
+                ViewBag.AllGenres = GetAllGenres();
+
+                foreach (int GenreID in SelectedGenre)
+                {
+                    query = query.Where(s => s.SongGenre.Any(g => g.GenreID == GenreID));
+                }
+                ViewBag.SelectedGenre = strSelectedGenre;
+            }
+
+
+            if (RatingString != null && RatingString != "")
+            //make sure string is a valid number
+            {
+                Decimal decRating;
+                try
+                {
+                    decRating = Convert.ToDecimal(RatingString);
+
+                }
+                catch // this code will disolay when something is wrong
+                {
+                    //Add a message for the viewbag
+                    ViewBag.Message = RatingString + "is not valid number. Please try again";
+
+                    //send user back to homepage
+                    return View("SongDetailedSearch");
+                }
+
+
+                List<SongIndexViewModel> SongsDisplay_descend = new List<SongIndexViewModel>();
+                List<SongIndexViewModel> SongsDisplay_ascend = new List<SongIndexViewModel>();
+                foreach (Song a in query)
+                {
+                    Decimal d = getAverageRating(a.SongID);
+                    if (d >= decRating)
+                    {
+                        SongIndexViewModel ab = new SongIndexViewModel();
+                        ab.Song = a;
+                        ab.SongRating = d;
+                        SongsDisplay_ascend.Add(ab);
+                    }
+                    else
+                    {
+                        SongIndexViewModel ab = new SongIndexViewModel();
+                        ab.Song = a;
+                        ab.SongRating = d;
+                        SongsDisplay_descend.Add(ab);
+                    }
+                }
+                IEnumerable<SongIndexViewModel> new_list_songs = SongsDisplay_ascend;
+                IEnumerable<SongIndexViewModel> new_list_songs_lt = SongsDisplay_descend;
+
+
+
+                if (SelectedBounds == SortOrder.ascending)
+                {
+                    ViewBag.SelectedSortOrder = "The records should be sorted in ascending order";
+                    return View("Index", new_list_songs);
+                }
+                else
+                {
+                    ViewBag.SelectedSortOrder = "The records should be sored in descending order";
+                    return View("Index", new_list_songs_lt);
+                }
+            }
+
+
+            return View();
+
+        }
+
+        public MultiSelectList GetAllGenres()
+        {
+            var query = from g in db.Genres
+                        orderby g.GenreName
+                        select g;
+
+            //convert to list
+            List<Genre> GenreList = query.ToList();
+
+            //Add in choice for not selecting a frequency
+            Genre NoChoice = new Genre() { GenreID = 0, GenreName = "All Genres" };
+            GenreList.Add(NoChoice);
+
+            //convert to multiselect
+            MultiSelectList AllGenres = new MultiSelectList(GenreList.OrderBy(g => g.GenreName), "GenreID", "GenreName");
+
+            return AllGenres;
+        }
     }
+
 }

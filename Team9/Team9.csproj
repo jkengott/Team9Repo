@@ -183,7 +183,7 @@
     <Content Include="Views\Albums\Index.cshtml" />
     <Content Include="Views\Artists\Create.cshtml" />
     <Content Include="Views\Artists\Delete.cshtml" />
-    <Content Include="Views\Artists\DetailedSearch.cshtml" />
+    <Content Include="Views\Artists\ArtistDetailedSearch.cshtml" />
     <Content Include="Views\Artists\Details.cshtml" />
     <Content Include="Views\Artists\Edit.cshtml" />
     <Content Include="Views\Artists\Index.cshtml" />
@@ -258,6 +258,7 @@
     <Content Include="Scripts\jquery-1.9.1.min.map" />
     <Content Include="Views\Albums\ReviewAlbum.cshtml" />
     <Content Include="Views\Songs\ReviewSong.cshtml" />
+    <Content Include="Views\Songs\SongDetailedSearch.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

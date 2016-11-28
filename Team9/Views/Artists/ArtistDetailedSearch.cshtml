@@ -1,0 +1,41 @@
+﻿@using Team9.Controllers
+
+@{
+    ViewBag.Title = "ArtistDetailedSearch";
+}
+
+<h2>Detailed Search</h2>
+
+
+@using (Html.BeginForm("ArtistSearchResults", "Artists", FormMethod.Get))
+{
+        <p class="form-group">
+            Album or Artist Name: @Html.TextBox("ArtistSearchString", null, new { @class = "form-control" }) <br />
+
+            @Html.ListBox("SelectedGenre", (MultiSelectList)ViewBag.AllGenres, new { @class = "form-control" })
+
+
+            Sort by rating: @Html.TextBox("RatingString", null, new { @class = "form-control" }) <br />
+
+            <div class="form-group">
+                <div class="form-check">
+                    <label class="form-check-label">
+                        @Html.RadioButton("SelectedBounds", SortOrder.ascending, true, new { @class = "form-check-input" }) Greater Than
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <label class="form-check-label">
+                        @Html.RadioButton("SelectedBounds", SortOrder.descending, new { @class = "form-check-input" }) Less Than
+                    </label>
+                </div>
+            </div>
+
+
+
+
+
+            <input type="submit" value="Search" class="btn btn-default" />
+
+        </p>
+    }
