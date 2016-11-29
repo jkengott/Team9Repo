@@ -329,7 +329,7 @@ namespace Team9.Controllers
             return RedirectToAction("Index");
         }
 
-        // GET: Album/ReviewArtist/5
+        // GET: Album/ReviewAlbum/5
         public ActionResult ReviewAlbum(int? id)
         {
             if (id == null)
@@ -337,11 +337,35 @@ namespace Team9.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Album album = db.Albums.Find(id);
+            Rating NewRating = new Rating();
+            NewRating.RatingAlbum = album;
             if (album == null)
             {
                 return HttpNotFound();
             }
-            return View(album);
+            return View(NewRating);
+        }
+        // POST: Album/ReviewAlbum/5
+        //######################################################//
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ReviewAlbum([Bind(Include = "RatingID,RatingText,RatingValue,RatingAlbum_AlbumID")]
+                                        Rating rating, int? id)
+        {
+            if (ModelState.IsValid)
+            {
+                // get user id
+                //TODO: fix this so that it actually gets the user id
+                AppUser user = db.Users.Find(User.Identity.GetUserId());
+                rating.User = user;
+                // get album id
+                rating.RatingAlbum = db.Albums.Find(id);
+                db.Ratings.Add(rating);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            return View(rating);
         }
 
         protected override void Dispose(bool disposing)
