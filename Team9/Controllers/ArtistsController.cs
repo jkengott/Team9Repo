@@ -317,11 +317,13 @@ namespace Team9.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Artist artist = db.Artists.Find(id);
+            Rating NewRating = new Rating();
+            NewRating.RatingArtist = artist;
             if (artist == null)
             {
                 return HttpNotFound();
             }
-            return View(artist);
+            return View(NewRating);
         }
 
         // POST: Artists/ReviewArtist/5
@@ -334,6 +336,11 @@ namespace Team9.Controllers
         {
             if (ModelState.IsValid)
             {
+                // get user id
+                AppUser user = db.Users.Find(User.Identity.GetUserId());
+                rating.User = user;
+                // get artist id
+                rating.RatingArtist = db.Artists.Find(id);
                 db.Ratings.Add(rating);
                 db.SaveChanges();
                 return RedirectToAction("Index");

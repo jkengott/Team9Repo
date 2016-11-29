@@ -1,20 +1,27 @@
-﻿@model Team9.Models.Artist
+﻿@model Team9.Models.Rating
 @{
     ViewBag.Title = "ReviewArtist";
 }
 
 <h2>ReviewArtist</h2>
 
-<h2>Review @Html.DisplayFor(model => model.ArtistName)</h2>
+<h2>Review @Html.DisplayFor(model => model.RatingArtist.ArtistName)</h2>
 
-@using (Html.BeginForm("Create", "Ratings"))
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
     <div>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.ArtistID, "RatingArtist_ArtistID")
-        <dl>
+        @Html.HiddenFor(model => model.RatingArtist.ArtistID)
+        <div class="form-group">
+            @Html.LabelFor(model => model.RatingValue, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.RatingValue, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.RatingValue, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        @*<dl>
             <dt>
                 Rating
             </dt>
@@ -52,7 +59,7 @@
                 </div>
             </dd>
         </dl>
-        <hr />
+        <hr />*@
         <dl>
             <dt>
                 Comments
@@ -70,7 +77,7 @@
 }
 
 <div>
-    @Html.ActionLink("Back to Artist", "Details", new { id = Model.ArtistID })
+    @Html.ActionLink("Back to Artist", "Details", new { id = Model.RatingArtist.ArtistID })
 </div>
 
 
