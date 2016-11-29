@@ -298,16 +298,57 @@ namespace Team9.Controllers
                 }
                 if(!CurrentUser.CC2.Equals(null))
                 {
-                    userCards.Add(CurrentUser.CC1);
+                    userCards.Add(CurrentUser.CC2);
                 }
-                //create list and execute query
-                SelectList list = new SelectList(userCards, "CardID", "CardNumber", purchase.PurchaseUser.CC1.CreditCardID );
+                //create list
+                SelectList list = new SelectList(userCards, "CreditCardID", "displayNumber" );
                 ViewBag.AllCards = list;
                 return View("Details", purchase);
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Details([Bind(Include = "PurchaseID,isPurchased,PurchaseDate,isGift,GiftUser,PurchaseItems,PurchaseUser")] Purchase Purchase,
+            Int32 CreditCardID)
+        {
+            
 
+            if (ModelState.IsValid)
+            {
+                foreach(PurchaseItem pi in Purchase.PurchaseItems)
+                {
+                    if (pi.isAlbum)
+                    {
+                        if (pi.PurchaseItemAlbum.isDiscounted)
+                        {
+                            pi.PurchaseItemPrice = pi.PurchaseItemAlbum.DiscountAlbumPrice;
+                        }
+                        else
+                        {
+                            pi.PurchaseItemPrice = pi.PurchaseItemAlbum.AlbumPrice;
+                        }
+                    }
+                    else
+                    {
+                        if (pi.PurchaseItemSong.isDiscoutned)
+                        {
+                            pi.PurchaseItemPrice = pi.PurchaseItemSong.DiscountPrice;
+                        }
+                        else
+                        {
+                            pi.PurchaseItemPrice = pi.PurchaseItemSong.SongPrice;
+                        }
+                    }
+                }
+                Purchase.PurchaseDate = DateTime.Now;
+                Purchase.isPurchased = true;
+                Purchase.PurchaseCard = db.Creditcards.Find(CreditCardID);
+                return RedirectToAction("Index");
+            }
+
+            return View(Purchase);
+        }
 
 
         // GET: Purchases/Create

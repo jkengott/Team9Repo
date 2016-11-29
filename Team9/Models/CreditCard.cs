@@ -72,8 +72,6 @@ namespace Team9.Models
         }
 
         public virtual AppUser CardOwner { get; set; }
-
-
       
     }
 }

@@ -33,9 +33,15 @@
 </dd>
 
 <div class="form-group">
-    <label class="control-label col-md-2">Committee</label>
+    <label class="control-label col-md-2">Credit Cards</label>
     <div class="col-md-10">
         @Html.DropDownList("CreditCardID", (SelectList)ViewBag.AllCards, new { @class = "form-control" })
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="col-md-offset-2 col-md-10">
+        <input type="submit" value="CompletePurchase" class="btn btn-default" />
     </div>
 </div>
 

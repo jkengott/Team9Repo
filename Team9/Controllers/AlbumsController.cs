@@ -148,12 +148,39 @@ namespace Team9.Controllers
             if (PurchaseList.Count() == 1)
             {
                 NewPurchase = PurchaseList[0];
+                Int32 AlbumCount = 0;
+                foreach(PurchaseItem pi in NewPurchase.PurchaseItems)
+                {
+                    if (pi.isAlbum)
+                    {
+                        AlbumCount += 1;
+                    }
+                }
+
 
                 //TODOXX: IF for discounted price
                 //newItem.PurchaseItemPrice = song.SongPrice;
                 //foreach (Song s in album.Songs)
                 //{
-                if (hasPurchased(album.AlbumID))
+                if (AlbumCount == 0)
+                {
+                    PurchaseItem newItem = new PurchaseItem();
+                    //Check if there is a discount price
+                    if (!album.isDiscounted)
+                    {
+                        newItem.PurchaseItemPrice = album.AlbumPrice;
+                    }
+                    else
+                    {
+                        newItem.PurchaseItemPrice = album.DiscountAlbumPrice;
+                    }
+                    newItem.PurchaseItemAlbum = album;
+                    newItem.Purchase = NewPurchase;
+                    newItem.isAlbum = true;
+                    db.PurchaseItems.Add(newItem);
+                    db.SaveChanges();
+                }
+                else if (hasPurchased(album.AlbumID) )
                 {
                     //continue;
                     //TODO:Error message to not add song?

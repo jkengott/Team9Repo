@@ -23,6 +23,8 @@ namespace Team9.Models
 
         public virtual AppUser GiftUser { get; set; }
 
+        public virtual CreditCard PurchaseCard {get;set;}
+
         public virtual List<PurchaseItem> PurchaseItems { get; set; }
 
         public virtual AppUser PurchaseUser { get; set; }

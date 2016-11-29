@@ -19,6 +19,7 @@ namespace Team9.Models
         public virtual CreditCard CC2 { get; set; }
         public string SSN { get; set; }
         public string City { get; set; }
+        public string State { get; set; }
         public string StreeAddress { get; set; }
         public string Zip { get; set; }
 
@@ -67,6 +68,8 @@ namespace Team9.Models
         public System.Data.Entity.DbSet<Team9.Models.Genre> Genres { get; set; }
 
         public System.Data.Entity.DbSet<Team9.Models.Rating> Ratings { get; set; }
+
+        public System.Data.Entity.DbSet<Team9.Models.CreditCard> Creditcards { get; set; }
 
 
     }
