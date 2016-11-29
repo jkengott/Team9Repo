@@ -20,17 +20,17 @@ namespace Team9.Controllers
         public bool hasPurchased(int id)
         {
             String CurrentUserId = User.Identity.GetUserId();
-            var query = from p in db.Purchases
-                        join pi in db.PurchaseItems on p.PurchaseID equals pi.Purchase.PurchaseID
-                        where p.isPurchased == false && p.PurchaseUser.Id == CurrentUserId
-                        select pi.PurchaseItemSong.SongID;
+            //var query = from p in db.Purchases
+            //            join pi in db.PurchaseItems on p.PurchaseID equals pi.Purchase.PurchaseID
+            //            where p.isPurchased == false && p.PurchaseUser.Id == CurrentUserId
+            //            select pi.PurchaseItemSong.SongID;
 
             var query2 = from p in db.Purchases
                          join pi in db.PurchaseItems on p.PurchaseID equals pi.Purchase.PurchaseID
                          where p.isPurchased == false && p.PurchaseUser.Id == CurrentUserId
                          select pi.PurchaseItemAlbum.AlbumID;
 
-            List<Int32> SongIDs = query.ToList();
+            //List<Int32> SongIDs = query.ToList();
             List<Int32> AlbumIDs = query2.ToList();
             //List<Int32> AlbumSongs = new List<Int32>();
             if (AlbumIDs.Contains(id))
@@ -173,6 +173,7 @@ namespace Team9.Controllers
                     }
                     newItem.PurchaseItemAlbum = album;
                     newItem.Purchase = NewPurchase;
+                    newItem.isAlbum = true;
                     db.PurchaseItems.Add(newItem);
                     db.SaveChanges();
 
@@ -211,6 +212,7 @@ namespace Team9.Controllers
                     }
                     newItem.PurchaseItemAlbum = album;
                     newItem.Purchase = NewPurchase;
+                    newItem.isAlbum = false;
                     db.PurchaseItems.Add(newItem);
                     db.SaveChanges();
                 }

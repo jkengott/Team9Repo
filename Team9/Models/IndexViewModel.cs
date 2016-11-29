@@ -33,4 +33,11 @@ namespace Team9.Models
         public Decimal SongRating { get; set; }
 
     }
+
+    public class PurchaseItemViewModel
+    {
+        public PurchaseItem PurchaseItem { get; set; }
+
+        public Decimal PurchaseItemRating { get; set; }
+    }
 }

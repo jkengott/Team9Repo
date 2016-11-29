@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Team9.Models.PurchaseItem>
+﻿@model IEnumerable<Team9.Models.PurchaseItemViewModel>
     @using Team9.Models
 
 @{
@@ -21,51 +21,59 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.PurchaseItemSong.SongName )
+            @Html.DisplayNameFor(model => model.PurchaseItem.PurchaseItemSong.SongName )
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.PurchaseItemSong.SongAlbum.AlbumName )
+            @Html.DisplayNameFor(model => model.PurchaseItem.PurchaseItemSong.SongAlbum.AlbumName )
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.PurchaseItemSong.SongArtist )
+            @Html.DisplayNameFor(model => model.PurchaseItem.PurchaseItemSong.SongArtist )
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.PurchaseItemSong.SongGenre )
+            @Html.DisplayNameFor(model => model.PurchaseItem.PurchaseItemSong.SongGenre )
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.PurchaseItemPrice )
+            @Html.DisplayNameFor(model => model.PurchaseItem.PurchaseItemPrice )
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseItemRating)
+        </th>
+
   
         <th></th>
     </tr>
 
 @foreach (var item in Model)
 {
-    if (!item.isAlbum)
+    if (!item.PurchaseItem.isAlbum)
     {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.PurchaseItemSong.SongName)
+            @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemSong.SongName)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.PurchaseItemSong.SongAlbum.AlbumName)
+            @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemSong.SongAlbum.AlbumName)
         </td>
         <td>
-            @foreach (Artist a in item.PurchaseItemSong.SongArtist)
+            @foreach (Artist a in item.PurchaseItem.PurchaseItemSong.SongArtist)
             {
                 <span>@a.ArtistName *</span>
             }
         </td>
         
         <td>
-            @Html.DisplayFor(modelItem => item.PurchaseItemSong.SongGenre)
+            @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemSong.SongGenre)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.PurchaseItemPrice)
+            @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemPrice)
         </td>
 
         <td>
-            @Html.ActionLink("Delete", "Delete", new { id = item.PurchaseItemID })
+            @Html.DisplayFor(modelItem => item.PurchaseItemRating)
+        </td>
+
+        <td>
+            @Html.ActionLink("Delete", "Delete", new { id = item.PurchaseItem.PurchaseItemID })
         </td>
     </tr>
     }
@@ -79,16 +87,19 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.PurchaseItemAlbum.AlbumName )
+            @Html.DisplayNameFor(model => model.PurchaseItem.PurchaseItemAlbum.AlbumName )
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.PurchaseItemAlbum.AlbumArtist )
+            @Html.DisplayNameFor(model => model.PurchaseItem.PurchaseItemAlbum.AlbumArtist )
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.PurchaseItemAlbum.AlbumGenre)
+            @Html.DisplayNameFor(model => model.PurchaseItem.PurchaseItemAlbum.AlbumGenre)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.PurchaseItemAlbum.AlbumPrice)
+            @Html.DisplayNameFor(model => model.PurchaseItem.PurchaseItemAlbum.AlbumPrice)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseItemRating )
         </th>
 
         <th></th>
@@ -96,28 +107,32 @@
 
     @foreach (var item in Model)
     {
-        if (item.isAlbum)
+        if (item.PurchaseItem.isAlbum)
         {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.PurchaseItemAlbum.AlbumName)
+                @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemAlbum.AlbumName)
             </td>
             <td>
-                @foreach (Artist a in item.PurchaseItemAlbum.AlbumArtist)
+                @foreach (Artist a in item.PurchaseItem.PurchaseItemAlbum.AlbumArtist)
                 {
                     <span>@a.ArtistName *</span>
                 }
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PurchaseItemAlbum.AlbumGenre )
+                @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemAlbum.AlbumGenre )
             </td>
 
             <td>
-                @Html.DisplayFor(modelItem => item.PurchaseItemAlbum.AlbumPrice)
+                @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemAlbum.AlbumPrice)
             </td>
 
             <td>
-                @Html.ActionLink("Delete", "Delete", new { id = item.PurchaseItemID })
+                @Html.DisplayFor(modelItem => item.PurchaseItemRating )
+            </td>   
+
+            <td>
+                @Html.ActionLink("Delete", "Delete", new { id = item.PurchaseItem.PurchaseItemID })
             </td>
         </tr>
         }
@@ -161,6 +176,6 @@
 @if (Model.Count() > 0)
 {
     <div>
-        @Html.ActionLink("Proceed to Checkout", "Details", "Purchases", new { id = Model.First().Purchase.PurchaseID }, new { @class = "btn btn-success" })
+        @Html.ActionLink("Proceed to Checkout", "Details", "Purchases", new { id = Model.First().PurchaseItem.Purchase.PurchaseID }, new { @class = "btn btn-success" })
     </div>
 }

@@ -15,6 +15,54 @@ namespace Team9.Controllers
     {
         private AppDbContext db = new AppDbContext();
 
+        public Decimal getAverageSongRating(int? id)
+        {
+            Decimal count = 0;
+            Decimal total = 0;
+            Decimal average;
+
+            Song song = db.Songs.Find(id);
+            foreach (Rating r in song.SongRatings)
+            {
+                count += 1;
+                total += r.RatingValue;
+            }
+            if (count == 0)
+            {
+                average = 0;
+            }
+            else
+            {
+                average = total / count;
+            }
+
+            return average;
+        }
+
+        public Decimal getAverageAlbumRating(int? id)
+        {
+            Decimal count = 0;
+            Decimal total = 0;
+            Decimal average;
+
+            Album Album = db.Albums.Find(id);
+            foreach (Rating r in Album.AlbumRatings)
+            {
+                count += 1;
+                total += r.RatingValue;
+            }
+            if (count == 0)
+            {
+                average = 0;
+            }
+            else
+            {
+                average = total / count;
+            }
+
+            return average;
+        }
+
         public bool checkDuplicates(List<Album> Albums)
         {
             String CurrentUserId = User.Identity.GetUserId();
@@ -77,7 +125,11 @@ namespace Team9.Controllers
                 decimal grandTotal = 0;
                 foreach (PurchaseItem pi in ActiveCartPurchase.PurchaseItems)
                 {
-                    if (pi.isAlbum)
+                    if (pi.Equals(null))
+                    {
+                        continue;
+                    }
+                    else if (pi.isAlbum)
                     {
                         subtotal += pi.PurchaseItemAlbum.AlbumPrice;
                         if (pi.PurchaseItemAlbum.isDiscounted)
@@ -117,11 +169,41 @@ namespace Team9.Controllers
                 ViewBag.taxTotal = taxTotal.ToString("c");
                 ViewBag.GrandTotal = grandTotal.ToString("c");
                 //End Calc Subtotals
-                return View(ActiveCartPurchase.PurchaseItems.ToList());
+                List<PurchaseItemViewModel> PIDisplay = new List<PurchaseItemViewModel>();
+                List<PurchaseItem> currentPurchaseItems = ActiveCartPurchase.PurchaseItems.ToList();
+                foreach(PurchaseItem pi in currentPurchaseItems)
+                {
+                    if (pi.isAlbum)
+                    {
+                        PurchaseItemViewModel PIVM = new PurchaseItemViewModel();
+                        PIVM.PurchaseItem = pi;
+                        PIVM.PurchaseItemRating = getAverageAlbumRating(pi.PurchaseItemAlbum.AlbumID);
+                        PIDisplay.Add(PIVM);
+                    }
+                    else
+                    {
+                        PurchaseItemViewModel PIVM = new PurchaseItemViewModel();
+                        PIVM.PurchaseItem = pi;
+                        PIVM.PurchaseItemRating = getAverageSongRating(pi.PurchaseItemSong.SongID);
+                        PIDisplay.Add(PIVM);
+                    }
+                }
+
+
+                return View(PIDisplay);
             }
             else
             {
-                return View(db.PurchaseItems.ToList());
+                Purchase newPurchase = new Purchase();
+                newPurchase.PurchaseUser = db.Users.Find(CurrentUserId);
+                db.Purchases.Add(newPurchase);
+                db.SaveChanges();
+                var query2 = from p in db.Purchases
+                             where p.isPurchased == false && p.PurchaseUser.Id == CurrentUserId
+                             select p;
+                List<Purchase> newPurchaseList = query2.ToList();
+                Purchase dbNewPurchase = newPurchaseList[0];
+                return View(dbNewPurchase.PurchaseItems.ToList());
             }
         }
 
@@ -204,7 +286,23 @@ namespace Team9.Controllers
                 ViewBag.taxTotal = taxTotal.ToString("c");
                 ViewBag.GrandTotal = grandTotal.ToString("c");
                 //End Calc Subtotals
-                List<String> CreditCards = new List<String>();
+
+
+                //create list and execute query
+                AppUser CurrentUser = db.Users.Find(CurrentUserId);
+
+                List<CreditCard> userCards = new List<CreditCard>();
+                if( !CurrentUser.CC1.Equals(null) )
+                {
+                    userCards.Add(CurrentUser.CC1);
+                }
+                if(!CurrentUser.CC2.Equals(null))
+                {
+                    userCards.Add(CurrentUser.CC1);
+                }
+                //create list and execute query
+                SelectList list = new SelectList(userCards, "CardID", "CardNumber", purchase.PurchaseUser.CC1.CreditCardID );
+                ViewBag.AllCards = list;
                 return View("Details", purchase);
             }
         }

@@ -9,96 +9,71 @@ namespace Team9.Models
     {
         public Int32 CreditCardID { get; set; }
 
-        public String CCNumber { get; set; }
+        private String _CCNumber;
+        public String CCNumber {
+            get { return _CCNumber; }
+            set
+            {
+                _CCNumber = value;
+                if (_CCNumber.Length == 15)
+                {
+                    _cardType = CCType.American_Express;
+                }
+                else if (_CCNumber.Substring(0, 2) == "54")
+                {
+                    _cardType = CCType.Mastercard;
+                }
+                else if (_CCNumber.Substring(0) == "4")
+                {
+                    _cardType = CCType.Visa;
+                }
+                else if (_CCNumber.Substring(0) == "6")
+                {
+                    _cardType = CCType.Discover;
+                }
+                else
+                {
+                    _cardType = CCType.None;
+                }
+                    if (_cardType == CCType.American_Express)
+                    {
+                        _displayNumber = "***********" + CCNumber.Substring(10, 4) + " - " + CardType.ToString();
+                    }
+                    else
+                    {
+                        _displayNumber = "************" + CCNumber.Substring(11, 4) + " - " + CardType.ToString();
+                    }
+                
+            }
+        }
 
         public enum CCType
         {
             Visa, American_Express, Discover, Mastercard, None
         }
 
-
+        private CCType _cardType;
         public CCType CardType
         {
             get
             {
-                if (CCNumber.Count() == 15)
-                {
-                    return CCType.American_Express;
-                }
-                else if (CCNumber.Substring(0, 2) == "54")
-                {
-                    return CCType.Mastercard;
-                }
-                else if (CCNumber.Substring(0) == "4")
-                {
-                    return CCType.Visa;
-                }
-                else if (CCNumber.Substring(0) == "6")
-                {
-                    return CCType.Discover;
-                }
-                else
-                {
-                    return CCType.None;
-                }
+                return _cardType;
             }
-            set
-            {
-                if (CCNumber.Count() == 15)
-                {
-                    CardType = CCType.American_Express;
-                }
-                else if (CCNumber.Substring(0, 2) == "54")
-                {
-                    CardType = CCType.Mastercard;
-                }
-                else if (CCNumber.Substring(0) == "4")
-                {
-                    CardType = CCType.Visa;
-                }
-                else if (CCNumber.Substring(0) == "6")
-                {
-                    CardType = CCType.Discover;
-                }
-                else
-                {
-                    CardType = CCType.None;
-                }
-            }
+           
         }
 
+        private String _displayNumber;
         public String displayNumber
         {
-            set
-            {
-                    string hiddennumber;
-                    if (CardType.ToString() == "American_Express")
-                    {
-                        hiddennumber = "***********" + CCNumber.Substring(10, 4);
-                         displayNumber = hiddennumber;
-                    }
-                    else
-                    {
-                        hiddennumber = "************" + CCNumber.Substring(11, 4);
-                        displayNumber = hiddennumber;
-                    }
-            }
             get
             {
-                string hiddennumber;
-                if (CardType.ToString() == "American_Express")
-                {
-                    hiddennumber = "***********" + CCNumber.Substring(10, 4);
-                    return hiddennumber;
-                }
-                else
-                {
-                    hiddennumber = "************" + CCNumber.Substring(11, 4);
-                    return hiddennumber;
-                }
+                return _displayNumber;
             }
         }
 
         public virtual AppUser CardOwner { get; set; }
+
+
+      
     }
 }
