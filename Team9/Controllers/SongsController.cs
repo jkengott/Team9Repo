@@ -335,11 +335,35 @@ namespace Team9.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Song song = db.Songs.Find(id);
+            Rating NewRating = new Rating();
+            NewRating.RatingSong = song;
             if (song == null)
             {
                 return HttpNotFound();
             }
-            return View(song);
+            return View(NewRating);
+        }
+        // POST: Songs/ReviewSong/5
+        //######################################################//
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ReviewSong([Bind(Include = "RatingID,RatingText,RatingValue,RatingSong_SongID")]
+                                        Rating rating, int? id)
+        {
+            if (ModelState.IsValid)
+            {
+                // get user id
+                //TODO: fix this so that it actually gets the user id
+                AppUser user = db.Users.Find(User.Identity.GetUserId());
+                rating.User = user;
+                // get song id
+                rating.RatingSong = db.Songs.Find(id);
+                db.Ratings.Add(rating);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            return View(rating);
         }
 
         protected override void Dispose(bool disposing)

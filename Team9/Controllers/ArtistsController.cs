@@ -337,6 +337,7 @@ namespace Team9.Controllers
             if (ModelState.IsValid)
             {
                 // get user id
+                //TODO: fix this so that it actually gets the user id
                 AppUser user = db.Users.Find(User.Identity.GetUserId());
                 rating.User = user;
                 // get artist id

@@ -1,63 +1,55 @@
-﻿@model Team9.Models.Song
+﻿@model Team9.Models.Rating
 @{
     ViewBag.Title = "ReviewSong";
 }
 
 <h2>ReviewSong</h2>
 
-<h2>Review @Html.DisplayFor(model => model.SongName)</h2>
+<h2>Review @Html.DisplayFor(model => model.RatingSong.SongName)</h2>
 
-@using (Html.BeginForm("Create", "Ratings"))
+@using (Html.BeginForm())
 {
+    @Html.AntiForgeryToken()
     <div>
         <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.RatingSong.SongID)
         <dl>
             <dt>
                 Rating
             </dt>
             <dd>
                 <label class="form-check-label">
-                    @Html.RadioButton("SongRating", new { @class = "form-check-input" })  1
+                    @Html.RadioButtonFor(model => model.RatingValue, "1", new { htmlAttributes = new { @class = "form-control" } })  1
                 </label>
             </dd>
             <dd>
-                <div class="form-check">
-                    <label class="form-check-label">
-                        @Html.RadioButton("SongRating", new { @class = "form-check-input" })  2
-                    </label>
-                </div>
+                <label class="form-check-label">
+                    @Html.RadioButtonFor(model => model.RatingValue, "2", new { htmlAttributes = new { @class = "form-control" } })  2
+                </label>
             </dd>
             <dd>
-                <div class="form-check">
-                    <label class="form-check-label">
-                        @Html.RadioButton("SongRating", new { @class = "form-check-input" })  3
-                    </label>
-                </div>
+                <label class="form-check-label">
+                    @Html.RadioButtonFor(model => model.RatingValue, "3", new { htmlAttributes = new { @class = "form-control" } })  3
+                </label>
             </dd>
             <dd>
-                <div class="form-check">
-                    <label class="form-check-label">
-                        @Html.RadioButton("SongRating", new { @class = "form-check-input" })  4
-                    </label>
-                </div>
+                <label class="form-check-label">
+                    @Html.RadioButtonFor(model => model.RatingValue, "4", new { htmlAttributes = new { @class = "form-control" } })  4
+                </label>
             </dd>
             <dd>
-                <div class="form-check">
-                    <label class="form-check-label">
-                        @Html.RadioButton("SongRating", new { @class = "form-check-input" })  5
-
-
-                    </label>
-                </div>
+                <label class="form-check-label">
+                    @Html.RadioButtonFor(model => model.RatingValue, "5", new { htmlAttributes = new { @class = "form-control" } })  5
+                </label>
             </dd>
         </dl>
-        <hr />
         <dl>
             <dt>
                 Comments
             </dt>
             <dd>
-                @Html.TextArea("Comments", null, new { @class = "form-control" }) <br />
+                @Html.TextArea("RatingText", null, new { @class = "form-control" }) <br />
             </dd>
         </dl>
     </div>
@@ -69,7 +61,7 @@
 }
 
 <div>
-    @Html.ActionLink("Back to Song", "Details", new { id = Model.SongID })
+    @Html.ActionLink("Back to Song", "Details", new { id = Model.RatingSong.SongID })
 </div>
 
 
