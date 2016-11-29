@@ -237,9 +237,30 @@
     <Compile Include="Migrations\201611272324493_Team9.3.Designer.cs">
       <DependentUpon>201611272324493_Team9.3.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201611290058331_9.4.cs" />
+    <Compile Include="Migrations\201611290058331_9.4.Designer.cs">
+      <DependentUpon>201611290058331_9.4.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611290128351_Team9.5.cs" />
+    <Compile Include="Migrations\201611290128351_Team9.5.Designer.cs">
+      <DependentUpon>201611290128351_Team9.5.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611290135362_Team9.6.cs" />
+    <Compile Include="Migrations\201611290135362_Team9.6.Designer.cs">
+      <DependentUpon>201611290135362_Team9.6.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611290348355_Team9.7.cs" />
+    <Compile Include="Migrations\201611290348355_Team9.7.Designer.cs">
+      <DependentUpon>201611290348355_Team9.7.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201611290358115_Team9.8.cs" />
+    <Compile Include="Migrations\201611290358115_Team9.8.Designer.cs">
+      <DependentUpon>201611290358115_Team9.8.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Album.cs" />
     <Compile Include="Models\Artist.cs" />
+    <Compile Include="Models\CreditCard.cs" />
     <Compile Include="Models\Genre.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\IdentityRoles.cs" />
@@ -278,6 +299,21 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201611272324493_Team9.3.resx">
       <DependentUpon>201611272324493_Team9.3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611290058331_9.4.resx">
+      <DependentUpon>201611290058331_9.4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611290128351_Team9.5.resx">
+      <DependentUpon>201611290128351_Team9.5.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611290135362_Team9.6.resx">
+      <DependentUpon>201611290135362_Team9.6.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611290348355_Team9.7.resx">
+      <DependentUpon>201611290348355_Team9.7.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611290358115_Team9.8.resx">
+      <DependentUpon>201611290358115_Team9.8.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

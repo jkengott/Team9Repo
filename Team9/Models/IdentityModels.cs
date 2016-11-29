@@ -15,14 +15,8 @@ namespace Team9.Models
         //For example:
         public string FName { get; set; }
         public string LName { get; set; }
-        public string CreditCard1 { get; set; }
-        public enum CCType
-        {
-            Visa, American_Express, Discover, Mastercard, None
-        }
-        public CCType CCType1 { get; set; }
-        public string CreditCard2 { get; set; }
-        public CCType CCType2 { get; set; }
+        public virtual CreditCard CC1 { get; set; }
+        public virtual CreditCard CC2 { get; set; }
         public string SSN { get; set; }
         public string City { get; set; }
         public string StreeAddress { get; set; }

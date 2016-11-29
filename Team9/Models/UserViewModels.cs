@@ -41,10 +41,8 @@ namespace Team9.Models
         //TODO: Add additional fields to register users here.
         public string FName { get; set; }
         public string LName { get; set; }
-        public string CreditCard1 { get; set; }
-        public AppUser.CCType CCType1 { get; set; }
-        public string CreditCard2 { get; set; }
-        public AppUser.CCType CCType2 { get; set; }
+        public virtual CreditCard CreditCard1 { get; set; }
+        public virtual CreditCard CreditCard2 { get; set; }
         public string SSN { get; set; }
 
     }

@@ -205,25 +205,12 @@ namespace Team9.Controllers
                 ViewBag.GrandTotal = grandTotal.ToString("c");
                 //End Calc Subtotals
                 List<String> CreditCards = new List<String>();
-                CreditCards.Add("Use new card (enter below)");
-                int CC1index = ActiveCartPurchase.PurchaseUser.CreditCard1.Length - 4;
-                String CC1 = ActiveCartPurchase.PurchaseUser.CreditCard1.Substring(CC1index, 4);
-                String CC1Type = ActiveCartPurchase.PurchaseUser.CCType1.ToString();
-                CC1 = "********" + CC1 + " " + CC1Type;
-                CreditCards.Add(CC1);
-                if(!String.IsNullOrEmpty(ActiveCartPurchase.PurchaseUser.CreditCard2))
-                {
-                    int CC2index = ActiveCartPurchase.PurchaseUser.CreditCard1.Length - 4;
-                    String CC2 = ActiveCartPurchase.PurchaseUser.CreditCard2.Substring(CC2index, 4);
-                    String CC2Type = ActiveCartPurchase.PurchaseUser.CCType2.ToString();
-                    CC2 = "**********" + CC2 + " " + CC2Type;
-                    CreditCards.Add(CC2);
-                }
-                SelectList SelectCreditCards = new SelectList(CreditCards, "CreditCardId");
-                ViewBag.selectCreditCards = SelectCreditCards;
                 return View("Details", purchase);
             }
         }
+
+
+
 
         // GET: Purchases/Create
         public ActionResult Create()

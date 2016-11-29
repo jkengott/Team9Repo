@@ -7,17 +7,15 @@
 
 <h2>Checkout</h2>
 
-<div>
+
     <dt>SubTotal:</dt>
     <dd> @ViewBag.subtotal</dd>
-</div>
+
 
 @if (ViewBag.discountSubtotal == "-1")
 {
-    <div>
         <dt>Discount SubTotal:</dt>
         <dd> @ViewBag.discountSubtotal</dd>
-    </div>
 }
 <dt>
     Tax (8.5%)
@@ -41,11 +39,6 @@
     </div>
 </div>
 
-<div class="form-group">
-    @Html.LabelFor(m => m.PurchaseUser.CreditCard2, new { @class = "col-md-2 control-label" })
-    <div class="col-md-10">
-        @Html.TextBoxFor(m => m.PurchaseUser.CreditCard2, new { @class = "form-control" })
+    <div>
+        @Html.ActionLink("Purchase", "Details", "Purchases", new { id = Model.PurchaseID }, new { @class = "btn btn-success" })
     </div>
-</div>
-
-

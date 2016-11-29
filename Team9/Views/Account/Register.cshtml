@@ -46,18 +46,19 @@
 
     //TODO: Create function to automatically determine and store the credit card type
     <div class="form-group">
-        @Html.LabelFor(m => m.CreditCard1 , new { @class = "col-md-2 control-label" })
+        @Html.LabelFor(m => m.CreditCard1.CCNumber , new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
-            @Html.TextBoxFor(m => m.CreditCard1, new { @class = "form-control" })
+            @Html.TextBoxFor(m => m.CreditCard1.CCNumber, new { @class = "form-control" })
         </div>
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(m => m.CreditCard2, new { @class = "col-md-2 control-label" })
+        @Html.LabelFor(m => m.CreditCard2.CCNumber, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
-            @Html.TextBoxFor(m => m.CreditCard2, new { @class = "form-control" })
+            @Html.TextBoxFor(m => m.CreditCard2.CCNumber, new { @class = "form-control" })
         </div>
     </div>
+
 
     //TODO: Make it where only employees have to put their SSN
     <div class="form-group">
