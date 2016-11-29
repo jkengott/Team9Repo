@@ -282,6 +282,9 @@ namespace Team9.Controllers
             {
                 return HttpNotFound();
             }
+
+            ViewBag.AllAlbums = GetAllAlbums(@song);
+
             return View(song);
         }
 
@@ -290,13 +293,41 @@ namespace Team9.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "SongID,SongName,SongPrice,SongLength")] Song song)
+        public ActionResult Edit([Bind(Include = "SongID,SongName,SongPrice,SongLength")] Song song, int SelectedAlbums)
         {
             if (ModelState.IsValid)
+
             {
-                db.Entry(song).State = EntityState.Modified;
+                //    //find associated member
+                //    Song SongToChange = db.Songs.Find(@song.SongID);
+
+                //    SongToChange.SongAlbum.Clear();
+
+                //    //if there are events to add then add them
+                //    if (SelectedAlbums != null)
+                //    {
+                //            Album AlbumToAdd = db.Albums.Find(@song.SongAlbum.AlbumID);
+                //            SongToChange.SongAlbum.Add(AlbumToAdd); 
+                //    }
+
+                //    db.Entry(song).State = EntityState.Modified;
+                //    db.SaveChanges();
+                //    return RedirectToAction("Index");
+                //}
+
+                //find associated member
+                Song songToChange = db.Songs.Find(@song.SongID);
+                Album albumToAdd = db.Albums.Find(@song.SongID);
+                songToChange.SongAlbum = (albumToAdd);
+                songToChange.SongName = song.SongName;
+                songToChange.SongPrice = song.SongPrice;
+                songToChange.SongLength = song.SongLength;
+                songToChange.SongRatings = song.SongRatings;
+                songToChange.SongGenre = song.SongGenre;
+
+                db.Entry(songToChange).State = EntityState.Modified;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+
             }
             return View(song);
         }
@@ -506,6 +537,23 @@ namespace Team9.Controllers
 
             return AllGenres;
         }
+
+        public SelectList GetAllAlbums(Song @song)
+        {
+            var query = from g in db.Albums
+                        orderby g.AlbumName
+                        select g;
+
+            //convert to list
+            List<Album> AlbumList = query.ToList();
+
+
+            //convert to multiselect
+            SelectList AllAlbums = new SelectList(AlbumList.OrderBy(g => g.AlbumName), "AlbumID", "AlbumName");
+
+            return AllAlbums;
+        }
+
     }
 
 }
