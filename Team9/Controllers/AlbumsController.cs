@@ -347,7 +347,7 @@ namespace Team9.Controllers
                 query = query.Where(a => a.AlbumName.Contains(AlbumSearchString) || a.AlbumArtist.Any(r => r.ArtistName == AlbumSearchString));
             }
 
-            if (SelectedGenre == null || SelectedGenre.Count() == 0) //nothing was selected
+            if (SelectedGenre == null) //nothing was selected
             {
                 ViewBag.SelectedGenre = "No genres were selected";
             }
@@ -366,7 +366,7 @@ namespace Team9.Controllers
             }
 
 
-            if (RatingString != null && RatingString != "")
+            if (RatingString != "")
             //make sure string is a valid number
             {
                 Decimal decRating;
@@ -423,7 +423,18 @@ namespace Team9.Controllers
             }
 
 
-            return View();
+            List<AlbumIndexViewModel> AlbumsList = new List<AlbumIndexViewModel>();
+            foreach (Album a in query)
+            {
+                Decimal d = getAverageRating(a.AlbumID);
+                AlbumIndexViewModel ab = new AlbumIndexViewModel();
+                ab.Album = a;
+                ab.AlbumRating = d;
+                AlbumsList.Add(ab);
+            }
+
+            return View("Index", AlbumsList);
+
 
         }
 

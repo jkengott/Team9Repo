@@ -100,7 +100,7 @@ namespace Team9.Controllers
                 query = query.Where(a => a.ArtistName.Contains(ArtistSearchString));
             }
 
-            if (SelectedGenre == null || SelectedGenre.Count() == 0) //nothing was selected
+            if (SelectedGenre == null) //nothing was selected
             {
                 ViewBag.SelectedGenre = "No genres were selected";
             }
@@ -114,12 +114,13 @@ namespace Team9.Controllers
                 foreach (int GenreID in SelectedGenre)
                 {
                     query = query.Where(s => s.ArtistGenre.Any(g => g.GenreID == GenreID));
+                   
                 }
                 ViewBag.SelectedGenre = strSelectedGenre;
             }
 
 
-            if (RatingString != null && RatingString != "")
+            if (RatingString != "")
             //make sure string is a valid number
             {
                 Decimal decRating;
@@ -175,8 +176,17 @@ namespace Team9.Controllers
                 }
             }
 
+            List<ArtistIndexViewModel> ArtistsList = new List<ArtistIndexViewModel>();
+            foreach (Artist a in query)
+            {
+                Decimal d = getAverageRating(a.ArtistID);
+                    ArtistIndexViewModel ab = new ArtistIndexViewModel();
+                    ab.Artist = a;
+                    ab.ArtistRating = d;
+                    ArtistsList.Add(ab);
+                }
 
-            return View();
+                return View("Index", ArtistsList);
 
         }
 
@@ -366,9 +376,9 @@ namespace Team9.Controllers
             //convert to list
             List<Genre> GenreList = query.ToList();
 
-            //Add in choice for not selecting a frequency
-            Genre NoChoice = new Genre() { GenreID = 0, GenreName = "All Genres" };
-            GenreList.Add(NoChoice);
+            //Add in choice for not selecting a Genre
+            //Genre NoChoice = new Genre() { GenreID = 0, GenreName = "All Genres" };
+            //GenreList.Add(NoChoice);
 
             //convert to multiselect
             MultiSelectList AllGenres = new MultiSelectList(GenreList.OrderBy(g => g.GenreName), "GenreID", "GenreName");
