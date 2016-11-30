@@ -9,11 +9,82 @@ using System.Web.Mvc;
 using Team9.Models;
 using Microsoft.AspNet.Identity;
 
+
+
 namespace Team9.Controllers
 {
     public class PurchasesController : Controller
     {
         private AppDbContext db = new AppDbContext();
+
+        public PurchaseViewModel calcPVM (Purchase p)
+        {
+            decimal subtotal = 0;
+            decimal discountSubtotal = -1;
+            decimal taxTotal = 0;
+            decimal tax = .0825m;
+            decimal grandTotal = 0;
+            foreach (PurchaseItem pi in p.PurchaseItems)
+            {
+                if (pi.isAlbum)
+                {
+                    subtotal += pi.PurchaseItemAlbum.AlbumPrice;
+                    if (pi.PurchaseItemAlbum.isDiscounted)
+                    {
+                        discountSubtotal = pi.PurchaseItemAlbum.DiscountAlbumPrice;
+                    }
+                    else
+                    {
+                        discountSubtotal = pi.PurchaseItemAlbum.AlbumPrice;
+                    }
+                }
+                else
+                {
+                    subtotal += pi.PurchaseItemSong.SongPrice;
+                    if (pi.PurchaseItemSong.isDiscoutned)
+                    {
+                        discountSubtotal = pi.PurchaseItemSong.DiscountPrice;
+                    }
+                    else
+                    {
+                        discountSubtotal = pi.PurchaseItemSong.SongPrice;
+                    }
+                }
+            }
+            if (discountSubtotal > 0)
+            {
+                taxTotal = tax * discountSubtotal;
+                grandTotal = discountSubtotal + taxTotal;
+            }
+            else
+            {
+                taxTotal = tax * subtotal;
+                grandTotal = subtotal + taxTotal;
+            }
+            PurchaseViewModel PVM = new PurchaseViewModel();
+            PVM.PurchaseID = p.PurchaseID;
+            PVM.subtotal = subtotal.ToString("c");
+            PVM.discountTotal = discountSubtotal.ToString("c");
+            PVM.taxTotal = taxTotal.ToString("c");
+            PVM.grandTotal = grandTotal.ToString("c");
+            return PVM;
+        }
+
+        public void getCards(AppUser u)
+        {
+            List<CreditCard> userCards = new List<CreditCard>();
+            if (!u.CC1.Equals(null))
+            {
+                userCards.Add(u.CC1);
+            }
+            if (!u.CC2.Equals(null))
+            {
+                userCards.Add(u.CC2);
+            }
+            //create list
+            SelectList list = new SelectList(userCards, "CreditCardID", "displayNumber");
+            ViewBag.AllCards = list;
+        }
 
         public Decimal getAverageSongRating(int? id)
         {
@@ -120,6 +191,7 @@ namespace Team9.Controllers
                 //CalcSubtotals
                 decimal subtotal = 0;
                 decimal discountSubtotal = -1;
+                bool hasDiscount = false;
                 decimal taxTotal = 0;
                 decimal tax = .0825m;
                 decimal grandTotal = 0;
@@ -134,11 +206,12 @@ namespace Team9.Controllers
                         subtotal += pi.PurchaseItemAlbum.AlbumPrice;
                         if (pi.PurchaseItemAlbum.isDiscounted)
                         {
-                            discountSubtotal = pi.PurchaseItemAlbum.DiscountAlbumPrice;
+                            discountSubtotal += pi.PurchaseItemAlbum.DiscountAlbumPrice;
+                            hasDiscount = true;
                         }
                         else
                         {
-                            discountSubtotal = pi.PurchaseItemAlbum.AlbumPrice;
+                            discountSubtotal += pi.PurchaseItemAlbum.AlbumPrice;
                         }
                     }
                     else
@@ -146,24 +219,28 @@ namespace Team9.Controllers
                         subtotal += pi.PurchaseItemSong.SongPrice;
                         if (pi.PurchaseItemSong.isDiscoutned)
                         {
-                            discountSubtotal = pi.PurchaseItemSong.DiscountPrice;
+                            discountSubtotal += pi.PurchaseItemSong.DiscountPrice;
+                            hasDiscount = true;
                         }
                         else
                         {
-                            discountSubtotal = pi.PurchaseItemSong.SongPrice;
+                            discountSubtotal += pi.PurchaseItemSong.SongPrice;
                         }
                     }
                 }
-                if (discountSubtotal > 0)
+                if (hasDiscount)
                 {
+                    discountSubtotal += 1;
                     taxTotal = tax * discountSubtotal;
                     grandTotal = discountSubtotal + taxTotal;
                 }
                 else
                 {
+                    discountSubtotal = -1;
                     taxTotal = tax * subtotal;
                     grandTotal = subtotal + taxTotal;
                 }
+                ViewBag.hasDiscount = hasDiscount;
                 ViewBag.subtotal = subtotal.ToString("c");
                 ViewBag.discountSubtotal = discountSubtotal.ToString("c");
                 ViewBag.taxTotal = taxTotal.ToString("c");
@@ -203,7 +280,14 @@ namespace Team9.Controllers
                              select p;
                 List<Purchase> newPurchaseList = query2.ToList();
                 Purchase dbNewPurchase = newPurchaseList[0];
-                return View(dbNewPurchase.PurchaseItems.ToList());
+                //ViewModel Code Start
+                List<PurchaseItemViewModel> PIDisplay = new List<PurchaseItemViewModel>();
+                ViewBag.subtotal = 0.ToString("c");
+                ViewBag.discountSubtotal = 0.ToString("c");
+                ViewBag.taxTotal = 0.ToString("c");
+                ViewBag.GrandTotal = 0.ToString("c");
+                ViewBag.hasDiscount = false;
+                return View(PIDisplay);
             }
         }
 
@@ -239,84 +323,27 @@ namespace Team9.Controllers
             else
             {
                 //CalcSubtotals
-                decimal subtotal = 0;
-                decimal discountSubtotal = -1;
-                decimal taxTotal = 0;
-                decimal tax = .0825m;
-                decimal grandTotal = 0;
-                foreach (PurchaseItem pi in ActiveCartPurchase.PurchaseItems)
-                {
-                    if (pi.isAlbum)
-                    {
-                        subtotal += pi.PurchaseItemAlbum.AlbumPrice;
-                        if (pi.PurchaseItemAlbum.isDiscounted)
-                        {
-                            discountSubtotal = pi.PurchaseItemAlbum.DiscountAlbumPrice;
-                        }
-                        else
-                        {
-                            discountSubtotal = pi.PurchaseItemAlbum.AlbumPrice;
-                        }
-                    }
-                    else
-                    {
-                        subtotal += pi.PurchaseItemSong.SongPrice;
-                        if (pi.PurchaseItemSong.isDiscoutned)
-                        {
-                            discountSubtotal = pi.PurchaseItemSong.DiscountPrice;
-                        }
-                        else
-                        {
-                            discountSubtotal = pi.PurchaseItemSong.SongPrice;
-                        }
-                    }
-                }
-                if (discountSubtotal > 0)
-                {
-                    taxTotal = tax * discountSubtotal;
-                    grandTotal = discountSubtotal + taxTotal;
-                }
-                else
-                {
-                    taxTotal = tax * subtotal;
-                    grandTotal = subtotal + taxTotal;
-                }
-                ViewBag.subtotal = subtotal.ToString("c");
-                ViewBag.discountSubtotal = discountSubtotal.ToString("c");
-                ViewBag.taxTotal = taxTotal.ToString("c");
-                ViewBag.GrandTotal = grandTotal.ToString("c");
+                PurchaseViewModel PVM = calcPVM(ActiveCartPurchase);
                 //End Calc Subtotals
 
 
                 //create list and execute query
                 AppUser CurrentUser = db.Users.Find(CurrentUserId);
-
-                List<CreditCard> userCards = new List<CreditCard>();
-                if( !CurrentUser.CC1.Equals(null) )
-                {
-                    userCards.Add(CurrentUser.CC1);
-                }
-                if(!CurrentUser.CC2.Equals(null))
-                {
-                    userCards.Add(CurrentUser.CC2);
-                }
-                //create list
-                SelectList list = new SelectList(userCards, "CreditCardID", "displayNumber" );
-                ViewBag.AllCards = list;
-                return View("Details", purchase);
+                //get Cards
+                getCards(CurrentUser);
+                return View("Details", PVM);
             }
         }
 
+        //POST for Purchase
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Details([Bind(Include = "PurchaseID,isPurchased,PurchaseDate,isGift,GiftUser,PurchaseItems,PurchaseUser")] Purchase Purchase,
-            Int32 CreditCardID)
+        public ActionResult Details(PurchaseViewModel Purchase, Int32 CreditCardID, bool newCard, string newCardNumber)
         {
-            
 
             if (ModelState.IsValid)
             {
-                foreach(PurchaseItem pi in Purchase.PurchaseItems)
+                Purchase currentPurchase = db.Purchases.Find(Purchase.PurchaseID);
+                foreach(PurchaseItem pi in currentPurchase.PurchaseItems)
                 {
                     if (pi.isAlbum)
                     {
@@ -341,14 +368,165 @@ namespace Team9.Controllers
                         }
                     }
                 }
-                Purchase.PurchaseDate = DateTime.Now;
-                Purchase.isPurchased = true;
-                Purchase.PurchaseCard = db.Creditcards.Find(CreditCardID);
+                if (newCard)
+                {
+                    CreditCard newCardUse = new CreditCard();
+                    String CurrentUserId = User.Identity.GetUserId();
+                    newCardUse.CCNumber = newCardNumber;
+                    newCardUse.CardOwner = db.Users.Find(CurrentUserId);
+                    db.Creditcards.Add(newCardUse);
+                    db.SaveChanges();
+                    var query = from c in db.Creditcards
+                                where c.CCNumber == newCardNumber && c.CardOwner.Id == CurrentUserId
+                                select c;
+                    List<CreditCard> newCardList = query.ToList();
+                    CreditCard finalNewCard = newCardList[0];
+                    currentPurchase.PurchaseCard = finalNewCard;
+                }
+                else
+                {
+                    currentPurchase.PurchaseCard = db.Creditcards.Find(CreditCardID);
+                }
+                currentPurchase.PurchaseDate = DateTime.Now;
+                currentPurchase.isPurchased = true;
+                
+                db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
             return View(Purchase);
         }
+
+
+        // GET: Purchases/Gift/5
+        public ActionResult Gift(int? id)
+        {
+            //STARTS HERE
+            //ENDS HERE
+            String CurrentUserId = User.Identity.GetUserId();
+            Purchase ActiveCartPurchase = db.Purchases.Find(id);
+            List<Album> Albums = new List<Album>();
+
+            foreach (PurchaseItem pi in ActiveCartPurchase.PurchaseItems)
+            {
+                if (pi.isAlbum)
+                {
+                    Albums.Add(pi.PurchaseItemAlbum);
+                }
+            }
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Purchase purchase = db.Purchases.Find(id);
+            if (purchase == null)
+            {
+                return HttpNotFound();
+            }
+            if (checkDuplicates(Albums))
+            {
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                //CalcSubtotals
+                PurchaseViewModel PVM = calcPVM(ActiveCartPurchase);
+                //End Calc Subtotals
+
+
+                //create list and execute query
+                AppUser CurrentUser = db.Users.Find(CurrentUserId);
+                getCards(CurrentUser);
+                return View("Gift", PVM);
+            }
+        }
+
+        //POST for Gift
+        [HttpPost]
+        public ActionResult Gift(PurchaseViewModel Purchase, Int32 CreditCardID, bool newCard, string newCardNumber, string giftEmail)
+        {
+            Purchase currentPurchase = db.Purchases.Find(Purchase.PurchaseID);
+            if (ModelState.IsValid)
+            {
+                foreach (PurchaseItem pi in currentPurchase.PurchaseItems)
+                {
+                    if (pi.isAlbum)
+                    {
+                        if (pi.PurchaseItemAlbum.isDiscounted)
+                        {
+                            pi.PurchaseItemPrice = pi.PurchaseItemAlbum.DiscountAlbumPrice;
+                        }
+                        else
+                        {
+                            pi.PurchaseItemPrice = pi.PurchaseItemAlbum.AlbumPrice;
+                        }
+                    }
+                    else
+                    {
+                        if (pi.PurchaseItemSong.isDiscoutned)
+                        {
+                            pi.PurchaseItemPrice = pi.PurchaseItemSong.DiscountPrice;
+                        }
+                        else
+                        {
+                            pi.PurchaseItemPrice = pi.PurchaseItemSong.SongPrice;
+                        }
+                    }
+                }
+                if (newCard)
+                {
+                    CreditCard newCardUse = new CreditCard();
+                    String CurrentUserId = User.Identity.GetUserId();
+                    newCardUse.CCNumber = newCardNumber;
+                    newCardUse.CardOwner = db.Users.Find(CurrentUserId);
+                    db.Creditcards.Add(newCardUse);
+                    db.SaveChanges();
+                    var query = from c in db.Creditcards
+                                where c.CCNumber == newCardNumber && c.CardOwner.Id == CurrentUserId
+                                select c;
+                    List<CreditCard> newCardList = query.ToList();
+                    CreditCard finalNewCard = newCardList[0];
+                    currentPurchase.PurchaseCard = finalNewCard;
+                }
+                else
+                {
+                    currentPurchase.PurchaseCard = db.Creditcards.Find(CreditCardID);
+                }
+                var query2 = from u in db.Users
+                             select u;
+                List<AppUser> userList = query2.ToList();
+                List<String> userEmails = new List<String>();
+                foreach(AppUser a in userList)
+                {
+                    userEmails.Add(a.Email);
+                }
+                if (userEmails.Contains(giftEmail))
+                {
+                    var query3 = from u in db.Users
+                                 where u.Email == giftEmail
+                                 select u;
+                    List<AppUser> giftUserList = query3.ToList();
+                    AppUser giftUser = giftUserList[0];
+                    currentPurchase.GiftUser = giftUser;
+                }
+                else
+                {
+                    PurchaseViewModel PVM = calcPVM(currentPurchase);
+                    getCards(currentPurchase.PurchaseUser);
+                    ViewBag.giftWarning = "Enter a valid Username";
+                    return View("Gift",PVM);
+                }
+                currentPurchase.PurchaseDate = DateTime.Now;
+                currentPurchase.isPurchased = true;
+                currentPurchase.isGift = true;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            PurchaseViewModel PVM2 = calcPVM(currentPurchase);
+            return View("Gift", PVM2);
+        }
+
 
 
         // GET: Purchases/Create

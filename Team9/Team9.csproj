@@ -164,11 +164,20 @@
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-theme.min.css.map" />
     <Content Include="Content\bootstrap-theme.css.map" />
+    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\jquery-1.10.2.js" />
+    <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <Content Include="Scripts\jquery-1.10.2.min.map" />
     <None Include="Scripts\jquery-1.9.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-1.9.1.js" />
     <Content Include="Scripts\jquery-1.9.1.min.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Account\ChangePassword.cshtml" />
@@ -261,6 +270,10 @@
     <Compile Include="Migrations\201611291759217_Team9.9.Designer.cs">
       <DependentUpon>201611291759217_Team9.9.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201611291903249_Team9.10.cs" />
+    <Compile Include="Migrations\201611291903249_Team9.10.Designer.cs">
+      <DependentUpon>201611291903249_Team9.10.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Album.cs" />
     <Compile Include="Models\Artist.cs" />
@@ -284,6 +297,7 @@
     <Content Include="Views\Albums\ReviewAlbum.cshtml" />
     <Content Include="Views\Songs\ReviewSong.cshtml" />
     <Content Include="Views\Songs\SongDetailedSearch.cshtml" />
+    <Content Include="Views\Purchases\Gift.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -321,6 +335,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201611291759217_Team9.9.resx">
       <DependentUpon>201611291759217_Team9.9.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201611291903249_Team9.10.resx">
+      <DependentUpon>201611291903249_Team9.10.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -40,4 +40,22 @@ namespace Team9.Models
 
         public Decimal PurchaseItemRating { get; set; }
     }
+
+    public class PurchaseViewModel
+    {
+        public Int32 PurchaseID { get; set; }
+        
+        public String subtotal { get; set; }
+
+        public String taxTotal { get; set; }
+
+        public String discountTotal { get; set; }
+
+        public String grandTotal { get; set; }
+
+        //Add validations here
+        public String newCardNumber { get; set; }
+
+        public String giftRecipient { get; set; }
+    }
 }

@@ -5,7 +5,7 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+<h2>Cart</h2>
 
 <h2>Songs</h2>
 
@@ -30,7 +30,7 @@
             @Html.DisplayNameFor(model => model.PurchaseItem.PurchaseItemSong.SongArtist )
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.PurchaseItem.PurchaseItemSong.SongGenre )
+            @Html.DisplayNameFor(model => model.PurchaseItem.PurchaseItemSong.SongGenre)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.PurchaseItem.PurchaseItemPrice )
@@ -62,10 +62,20 @@
         </td>
         
         <td>
-            @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemSong.SongGenre)
+            @foreach (Genre g in item.PurchaseItem.PurchaseItemSong.SongGenre)
+            {
+                <span>@g.GenreName *</span>
+            }
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemPrice)
+            @if (item.PurchaseItem.PurchaseItemSong.isDiscoutned)
+            {
+                @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemSong.DiscountPrice )
+            }
+            else
+            {
+                @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemSong.SongPrice )
+            }
         </td>
 
         <td>
@@ -120,11 +130,21 @@
                 }
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemAlbum.AlbumGenre )
+                @foreach (Genre g in item.PurchaseItem.PurchaseItemAlbum.AlbumGenre)
+                {
+                    <span>@g.GenreName *</span>
+                }
             </td>
 
             <td>
-                @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemAlbum.AlbumPrice)
+                @if (item.PurchaseItem.PurchaseItemAlbum.isDiscounted )
+                {
+                    @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemAlbum.DiscountAlbumPrice)
+                }
+                else
+                {
+                    @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemAlbum.AlbumPrice)
+                }
             </td>
 
             <td>
@@ -148,14 +168,14 @@
     @ViewBag.subtotal
 </dd>
 
-@if (ViewBag.discountSubtotal == "-1")
+@if (ViewBag.hasDiscount)
 {
     <dt>
         Discount SubTotal:
     </dt>
 
     <dd>
-        @ViewBag.discountSubtotal.
+        @ViewBag.discountSubtotal
     </dd>
 }
 <dt>
@@ -177,5 +197,8 @@
 {
     <div>
         @Html.ActionLink("Proceed to Checkout", "Details", "Purchases", new { id = Model.First().PurchaseItem.Purchase.PurchaseID }, new { @class = "btn btn-success" })
+    </div>
+    <div>
+        @Html.ActionLink("Give as Gift", "Gift", "Purchases", new { id = Model.First().PurchaseItem.Purchase.PurchaseID }, new { @class = "btn btn-success" })
     </div>
 }
