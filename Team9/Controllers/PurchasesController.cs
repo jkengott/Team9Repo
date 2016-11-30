@@ -530,9 +530,52 @@ namespace Team9.Controllers
 
 
         // GET: Purchases/Create
-        public ActionResult Create()
+        public ActionResult myMusic()
         {
-            return View();
+            String CurrentUserId = User.Identity.GetUserId();
+            var query = from p in db.Purchases
+                        where p.isPurchased == true && (p.PurchaseUser.Id == CurrentUserId || p.GiftUser.Id == CurrentUserId)
+                        select p;
+
+            // Create a list of selected albums
+            List<Purchase> Purchases = query.ToList();
+            List<Song> mySongs = new List<Song>();
+            foreach(Purchase p in Purchases)
+            {
+                foreach(PurchaseItem pi in p.PurchaseItems)
+                {
+                    if (pi.isAlbum)
+                    {
+                        foreach(Song s in pi.PurchaseItemAlbum.Songs)
+                        {
+                            mySongs.Add(s);
+                        }
+                    }
+                    else
+                    {
+                        mySongs.Add(pi.PurchaseItemSong);
+                    }
+                }
+            }
+
+            //Create a view bag to store the number of selected albums
+            ViewBag.TotalSongCount = mySongs.Count();
+
+            List<SongIndexViewModel> SongsDisplay = new List<SongIndexViewModel>();
+
+            foreach (Song a in mySongs)
+            {
+                SongIndexViewModel AVM = new SongIndexViewModel();
+
+                AVM.Song = a;
+
+                AVM.SongRating = getAverageSongRating(a.SongID);
+
+                SongsDisplay.Add(AVM);
+
+            }
+
+            return View(SongsDisplay);
         }
 
         // POST: Purchases/Create
