@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
@@ -10,6 +9,7 @@ using Team9.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
+using System.Collections.Generic;
 
 namespace Team9.Controllers
 {
@@ -293,33 +293,22 @@ namespace Team9.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "SongID,SongName,SongPrice,SongLength")] Song song, int SelectedAlbums)
+        public ActionResult Edit([Bind(Include = "SongID,SongName,SongPrice,SongLength")] Song song, Int32 AlbumID)
         {
             if (ModelState.IsValid)
-
             {
-                //    //find associated member
-                //    Song SongToChange = db.Songs.Find(@song.SongID);
-
-                //    SongToChange.SongAlbum.Clear();
-
-                //    //if there are events to add then add them
-                //    if (SelectedAlbums != null)
-                //    {
-                //            Album AlbumToAdd = db.Albums.Find(@song.SongAlbum.AlbumID);
-                //            SongToChange.SongAlbum.Add(AlbumToAdd); 
-                //    }
-
-                //    db.Entry(song).State = EntityState.Modified;
-                //    db.SaveChanges();
-                //    return RedirectToAction("Index");
-                //}
-
-                //find associated member
                 Song songToChange = db.Songs.Find(@song.SongID);
+                //change album if necessary
+                if (songToChange.SongAlbum.AlbumID != AlbumID)
+                {
+                    //find AlbumID
+                    Album SelectedAlbum = db.Albums.Find(AlbumID);
+                    //update album
+                    songToChange.SongAlbum = SelectedAlbum;
+                }
                 Album albumToAdd = db.Albums.Find(@song.SongID);
-                songToChange.SongAlbum = (albumToAdd);
                 songToChange.SongName = song.SongName;
+                songToChange.SongArtist = song.SongArtist;
                 songToChange.SongPrice = song.SongPrice;
                 songToChange.SongLength = song.SongLength;
                 songToChange.SongRatings = song.SongRatings;
@@ -327,8 +316,8 @@ namespace Team9.Controllers
 
                 db.Entry(songToChange).State = EntityState.Modified;
                 db.SaveChanges();
-
             }
+            ViewBag.AllGenres = GetAllAlbums(@song);
             return View(song);
         }
 
@@ -548,10 +537,10 @@ namespace Team9.Controllers
             List<Album> AlbumList = query.ToList();
 
 
-            //convert to multiselect
-            SelectList AllAlbums = new SelectList(AlbumList.OrderBy(g => g.AlbumName), "AlbumID", "AlbumName");
+            //convert to Selectlist
+            SelectList AllAlbums2 = new SelectList(AlbumList, "AlbumID", "AlbumName");
 
-            return AllAlbums;
+            return AllAlbums2;
         }
 
     }
