@@ -59,13 +59,23 @@ namespace Team9.Models
         public String giftRecipient { get; set; }
     }
 
-    public class PurchaseItemReportViewModel
+    public class SongReportViewModel
     {
-        public PurchaseItem PurchaseItem { get; set; }
+        public Song Song { get; set; }
 
         public Int32 purchaseCount { get; set; }
 
         public Decimal songRevenue { get; set; }
+
+    }
+
+    public class AlbumReportViewModel
+    {
+        public Album Album { get; set; }
+
+        public Int32 purchaseCount { get; set; }
+
+        public Decimal AlbumRevenue { get; set; }
 
     }
 }

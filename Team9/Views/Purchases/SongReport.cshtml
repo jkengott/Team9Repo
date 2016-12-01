@@ -1,0 +1,78 @@
+﻿@model IEnumerable<Team9.Models.SongReportViewModel >
+@using Team9.Models
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Song Revenues</h2>
+
+<h2>Songs</h2>
+
+@if (ViewBag.DuplicateMessage != null)
+{
+    <div class="alert alert-warning">
+        <strong>
+            @ViewBag.DuplicateMessage
+        </strong>
+    </div>
+}
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Song.SongName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Song.SongAlbum.AlbumName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Song.SongArtist)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Song.SongGenre)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.purchaseCount )
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.songRevenue)
+        </th>
+
+    </tr>
+
+    @foreach (var item in Model)
+    {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Song.SongName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Song.SongAlbum.AlbumName)
+                </td>
+                <td>
+                    @foreach (Artist a in item.Song.SongArtist)
+                    {
+                        <span>@a.ArtistName *</span>
+                    }
+                </td>
+
+                <td>
+                    @foreach (Genre g in item.Song.SongGenre)
+                    {
+                        <span>@g.GenreName *</span>
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.purchaseCount ) 
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.songRevenue )
+                </td>
+            </tr>
+    }
+
+</table>
+
+

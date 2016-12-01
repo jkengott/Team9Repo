@@ -298,6 +298,9 @@
     <Content Include="Views\Purchases\Gift.cshtml" />
     <Content Include="Views\Purchases\MyMusic.cshtml" />
     <Content Include="Views\Purchases\orderHistory.cshtml" />
+    <Content Include="Views\Purchases\SongReport.cshtml" />
+    <Content Include="Views\Purchases\ReportHome.cshtml" />
+    <Content Include="Views\Purchases\AlbumReport.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

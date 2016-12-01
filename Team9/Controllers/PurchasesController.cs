@@ -655,15 +655,24 @@ namespace Team9.Controllers
                 }
                 return View(PIDisplay);
             }
+
+        //GET: ReportHome
+        public ActionResult ReportHome()
+        {
+            return View();
+        }
+
+        //GET: SongReports
         public ActionResult songReport()
         {
             var query = from s in db.Songs
                         select s;
 
             List<Song> allSongs = query.ToList();
-            List<PurchaseItemReportViewModel> songReports = new List<PurchaseItemReportViewModel>();
+            List<SongReportViewModel> songReports = new List<SongReportViewModel>();
             foreach(Song s in allSongs)
             {
+                SongReportViewModel sivm = new SongReportViewModel();
                 var query2 = from pi in db.PurchaseItems
                              where pi.Purchase.isPurchased == true && pi.PurchaseItemSong.SongID == s.SongID
                              select pi;
@@ -674,11 +683,44 @@ namespace Team9.Controllers
                 {
                     purchaseCount += 1;
                     totalRevenue += pi.PurchaseItemPrice;
-
                 }
-
+                sivm.purchaseCount = purchaseCount;
+                sivm.songRevenue = totalRevenue;
+                sivm.Song = s;
+                songReports.Add(sivm);
             }
+            return View(songReports);
         }
 
+        public ActionResult AlbumReport()
+        {
+            var query = from a in db.Albums
+                        select a;
+
+            List<Album> allAlbums = query.ToList();
+            List<AlbumReportViewModel> AlbumReports = new List<AlbumReportViewModel>();
+            foreach (Album a in allAlbums)
+            {
+                AlbumReportViewModel aivm = new AlbumReportViewModel();
+                var query2 = from pi in db.PurchaseItems
+                             where pi.Purchase.isPurchased == true && pi.PurchaseItemAlbum.AlbumID == a.AlbumID
+                             select pi;
+                List<PurchaseItem> AlbumPurchaseItem = query2.ToList();
+                Int32 purchaseCount = 0;
+                Decimal totalRevenue = 0;
+                foreach (PurchaseItem pi in AlbumPurchaseItem)
+                {
+                    purchaseCount += 1;
+                    totalRevenue += pi.PurchaseItemPrice;
+                }
+                aivm.purchaseCount = purchaseCount;
+                aivm.AlbumRevenue = totalRevenue;
+                aivm.Album = a;
+                AlbumReports.Add(aivm);
+            }
+            return View(AlbumReports);
         }
+
+
+    }
 }
