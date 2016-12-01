@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.ComponentModel.DataAnnotations;
 
 namespace Team9.Models
 {
@@ -9,13 +10,19 @@ namespace Team9.Models
     {
         public Int32 CreditCardID { get; set; }
 
+
         private String _CCNumber;
+        [DataType(DataType.CreditCard)]
         public String CCNumber {
             get { return _CCNumber; }
             set
             {
                 _CCNumber = value;
-                if (_CCNumber.Length == 15)
+                if (String.IsNullOrEmpty(_CCNumber))
+                {
+                    _cardType = CCType.None;
+                }
+                else if (_CCNumber.Length == 15)
                 {
                     _cardType = CCType.American_Express;
                 }
@@ -23,11 +30,11 @@ namespace Team9.Models
                 {
                     _cardType = CCType.Mastercard;
                 }
-                else if (_CCNumber.Substring(0) == "4")
+                else if (_CCNumber.Substring(0,1) == "4")
                 {
                     _cardType = CCType.Visa;
                 }
-                else if (_CCNumber.Substring(0) == "6")
+                else if (_CCNumber.Substring(0,1) == "6")
                 {
                     _cardType = CCType.Discover;
                 }
@@ -38,6 +45,10 @@ namespace Team9.Models
                     if (_cardType == CCType.American_Express)
                     {
                         _displayNumber = "***********" + CCNumber.Substring(10, 4) + " - " + CardType.ToString();
+                    }
+                    else if (_cardType == CCType.None)
+                    {
+                    _displayNumber = "No second card on file";
                     }
                     else
                     {
