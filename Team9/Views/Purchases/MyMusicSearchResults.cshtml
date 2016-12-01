@@ -1,0 +1,23 @@
+﻿@using Team9.Controllers
+
+@{
+    ViewBag.Title = "MyMusicSearchResults";
+}
+
+<h2>MyMusicSearchResults</h2>
+
+@using (Html.BeginForm("MyMusicSearchResults", "Purchases", FormMethod.Get))
+{
+    <p class="form-group">
+
+        Song, Album or Artist Name: @Html.TextBox("SongSearchString", null, new { @class = "form-control" }) <br />
+
+        @Html.ListBox("SelectedGenre", (MultiSelectList)ViewBag.AllGenres, new { @class = "form-control" })
+
+
+        <input type="submit" value="Search" class="btn btn-default" />
+
+    </p>
+
+}
+

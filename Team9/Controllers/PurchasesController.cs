@@ -530,7 +530,7 @@ namespace Team9.Controllers
 
 
         // GET: myMusic
-        public ActionResult myMusic()
+        public ActionResult myMusic(string SongString)
         {
             String CurrentUserId = User.Identity.GetUserId();
             var query = from p in db.Purchases
@@ -560,25 +560,75 @@ namespace Team9.Controllers
                 }
             }
 
-            //Create a view bag to store the number of selected albums
-            ViewBag.TotalSongCount = mySongs.Count();
-
-            List<SongIndexViewModel> SongsDisplay = new List<SongIndexViewModel>();
-
-            foreach (Song a in mySongs)
+            if (SongString == null || SongString == "") // they didn't select anything
             {
-                SongIndexViewModel AVM = new SongIndexViewModel();
-
-                AVM.Song = a;
-
-                AVM.SongRating = getAverageSongRating(a.SongID);
-
-                SongsDisplay.Add(AVM);
+                mySongs = db.Songs.ToList();
 
             }
+            else //they picked something
+            {
+                //use linq to display searched names
+                mySongs = db.Songs.Where(a => a.SongName.Contains(SongString) || a.SongArtist.Any(r => r.ArtistName == SongString)).ToList();
 
-            return View(SongsDisplay);
+                //Create selected count of customers
+                ViewBag.SelectedSongCount = mySongs.Count();
+
+                //order the record to display sorted by lastname, first name, average sales
+                mySongs.OrderBy(a => a.SongName).ThenBy(a => a.SongPrice);
+            }
+
+            return View(mySongs);
         }
+
+        public ActionResult MyMusicDetailedSearch()
+        {
+            ViewBag.SelectedGenre = GetAllGenres();
+            return View();
+        }
+
+        public ActionResult MyMusicSearchResults(string SongSearchString, int[] SelectedGenre)
+        {
+            var query = from a in db.Songs
+                        select a;
+
+
+            if (SongSearchString == null || SongSearchString == "") //they didn't select anything
+            {
+                ViewBag.SongSearchString = "Search String was null";
+            }
+            else //they picked something up
+            {
+                ViewBag.SongSearchString = "The search string is" + SongSearchString;
+                query = query.Where(a => a.SongName.Contains(SongSearchString) || a.SongArtist.Any(r => r.ArtistName == SongSearchString));
+            }
+
+            if (SelectedGenre == null) //nothing was selected
+            {
+                ViewBag.SelectedGenre = "No genres were selected";
+            }
+            else
+            {
+                String strSelectedGenre = "The selected genre(s) is/are: ";
+
+                //get list of genres
+                ViewBag.AllGenres = GetAllGenres();
+
+                foreach (int GenreID in SelectedGenre)
+                {
+                    query = query.Where(s => s.SongGenre.Any(g => g.GenreID == GenreID));
+                }
+                ViewBag.SelectedGenre = strSelectedGenre;
+            }
+
+            query = query.OrderBy(a => a.SongName).ThenBy(a => a.SongArtist);
+            List<Song> mySongs = query.ToList();
+
+            return View(mySongs);
+
+        }
+
+
+
 
         // GET: Purchases/Delete/5
         public ActionResult Delete(int? id)
@@ -625,6 +675,7 @@ namespace Team9.Controllers
                         select p;
 
             List<Purchase> PurchasedCartList = query.ToList();
+
             List<PurchaseItem> PurcahseItems = new List<PurchaseItem>();
             foreach(Purchase p in PurchasedCartList)
             {
@@ -719,6 +770,25 @@ namespace Team9.Controllers
                 AlbumReports.Add(aivm);
             }
             return View(AlbumReports);
+        }
+
+        public MultiSelectList GetAllGenres()
+        {
+            var query = from g in db.Genres
+                        orderby g.GenreName
+                        select g;
+
+            //convert to list
+            List<Genre> GenreList = query.ToList();
+
+            //Add in choice for not selecting a frequency
+            Genre NoChoice = new Genre() { GenreID = 0, GenreName = "All Genres" };
+            GenreList.Add(NoChoice);
+
+            //convert to multiselect
+            MultiSelectList AllGenres = new MultiSelectList(GenreList.OrderBy(g => g.GenreName), "GenreID", "GenreName");
+
+            return AllGenres;
         }
 
 
