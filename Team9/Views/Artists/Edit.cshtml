@@ -24,12 +24,29 @@
                 @Html.ValidationMessageFor(model => model.ArtistName, "", new { @class = "text-danger" })
             </div>
         </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ArtistSongs, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.ListBox("SelectedSongs", (MultiSelectList)ViewBag.AllSongs, new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ArtistAlbums, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.ListBox("SelectedAlbums", (MultiSelectList)ViewBag.AllAlbums, new { @class = "form-control" })
+            </div>
+        </div>
+
         <div class="form-group">
             @Html.LabelFor(model => model.ArtistGenre, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @*@Html.ListBox("Genres", (MultiSelectList)ViewBag.AllGenres, new { @class = "form-control" })*@
+                @Html.ListBox("SelectedGenres", (MultiSelectList)ViewBag.AllGenres, new { @class = "form-control" })
             </div>
         </div>
+
+
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Save" class="btn btn-default" />

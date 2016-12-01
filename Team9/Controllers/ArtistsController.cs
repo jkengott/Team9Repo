@@ -243,7 +243,11 @@ namespace Team9.Controllers
             {
                 return HttpNotFound();
             }
-            //ViewBag.AllGenres = GetAllGenres(@artist);
+
+            ViewBag.AllSongs = GetAllSongs(@artist);
+            ViewBag.AllGenres = GetAllGenres(@artist);
+            ViewBag.AllAlbums = GetAllAlbums(@artist);
+
             return View(artist);
         }
 
@@ -252,18 +256,43 @@ namespace Team9.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ArtistID,ArtistName")] Artist artist, int[] SelectedGenres)
+        public ActionResult Edit([Bind(Include = "ArtistID,ArtistName")] Artist artist, int[] SelectedSongs, int[] SelectedAlbums, int[] SelectedGenres)
         {
             if (ModelState.IsValid) // NOT CATCHING AS VALID!!!!
             {
-                //find associated Artist
-                Artist artistToChange = db.Artists.Find(@artist.ArtistID);
+                Artist artistToChange = db.Artists.Find(artist.ArtistID);
 
-                //change Genres
-                //remove any existing genres
+                //clear current songs
+                artistToChange.ArtistSongs.Clear();
+
+                //if there are Songs to add then add them
+                if (SelectedSongs != null)
+                {
+                    foreach (int SongID in SelectedSongs)
+                    {
+                        Song songToAdd = db.Songs.Find(SongID);
+                        artistToChange.ArtistSongs.Add(songToAdd);
+                    }
+                }
+
+                //clear current albums
+                artistToChange.ArtistAlbums.Clear();
+
+                //if there are Songs to add then add them
+                if (SelectedAlbums != null)
+                {
+                    foreach (int AlbumID in SelectedAlbums)
+                    {
+                        Album albumToAdd = db.Albums.Find(AlbumID);
+                        artistToChange.ArtistAlbums.Add(albumToAdd);
+                    }
+                }
+
+                //change genres
+                //remove any existing genre
                 artistToChange.ArtistGenre.Clear();
 
-                //if there are events to add then add them
+                //if there are genres to add then add them
                 if (SelectedGenres != null)
                 {
                     foreach (int GenreID in SelectedGenres)
@@ -272,14 +301,17 @@ namespace Team9.Controllers
                         artistToChange.ArtistGenre.Add(genreToAdd);
                     }
                 }
-                artistToChange.ArtistName = @artist.ArtistName;                
+
 
                 db.Entry(artistToChange).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            //repopulate the viewbag
-            //ViewBag.AllGenres = GetAllGenres(@artist);
+
+            ViewBag.AllSongs = GetAllSongs(@artist);
+            ViewBag.AllGenres = GetAllGenres(@artist);
+            ViewBag.AllAlbums = GetAllAlbums(@artist);
+
             return View(@artist);
         }
 
@@ -392,6 +424,56 @@ namespace Team9.Controllers
             MultiSelectList AllGenres = new MultiSelectList(GenreList.OrderBy(g => g.GenreName), "GenreID", "GenreName");
 
             return AllGenres;
+        }
+
+        public MultiSelectList GetAllGenres(Artist @artist)
+        {
+            var query = from g in db.Genres
+                        orderby g.GenreName
+                        select g;
+
+            //convert to list
+            List<Genre> GenreList = query.ToList();
+
+            //Add in choice for not selecting a Genre
+            //Genre NoChoice = new Genre() { GenreID = 0, GenreName = "All Genres" };
+            //GenreList.Add(NoChoice);
+
+            //convert to multiselect
+            MultiSelectList AllGenres = new MultiSelectList(GenreList, "GenreID", "GenreName");
+
+            return AllGenres;
+        }
+
+        public MultiSelectList GetAllAlbums(Artist @artist)
+        {
+            var query = from g in db.Albums
+                        orderby g.AlbumName
+                        select g;
+
+            //convert to list
+            List<Album> AlbumList = query.ToList();
+
+
+            //convert to Selectlist
+            MultiSelectList AllAlbums = new MultiSelectList(AlbumList, "AlbumID", "AlbumName");
+
+            return AllAlbums;
+        }
+
+        public MultiSelectList GetAllSongs(Artist @artist)
+        {
+            var query = from g in db.Songs
+                        orderby g.SongName
+                        select g;
+
+            //convert to list
+            List<Song> SongList = query.ToList();
+
+            //convert to multiselect
+            MultiSelectList AllSongs = new MultiSelectList(SongList, "SongID", "SongName");
+
+            return AllSongs;
         }
 
         protected override void Dispose(bool disposing)

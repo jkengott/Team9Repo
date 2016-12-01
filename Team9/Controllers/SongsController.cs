@@ -284,6 +284,8 @@ namespace Team9.Controllers
             }
 
             ViewBag.AllAlbums = GetAllAlbums(@song);
+            ViewBag.AllArtist = GetAllArtist(@song);
+            ViewBag.AllGenres = GetAllGenres(@song);
 
             return View(song);
         }
@@ -293,11 +295,12 @@ namespace Team9.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "SongID,SongName,SongPrice,SongLength")] Song song, Int32 AlbumID)
+        public ActionResult Edit([Bind(Include = "SongID,SongName,SongPrice,SongLength,isDiscoutned,DiscountPrice")]
+                                    Song song, int AlbumID, int[] SelectedArtist, int[] SelectedGenre)
         {
             if (ModelState.IsValid)
             {
-                Song songToChange = db.Songs.Find(@song.SongID);
+                Song songToChange = db.Songs.Find(song.SongID);
                 //change album if necessary
                 if (songToChange.SongAlbum.AlbumID != AlbumID)
                 {
@@ -306,20 +309,55 @@ namespace Team9.Controllers
                     //update album
                     songToChange.SongAlbum = SelectedAlbum;
                 }
-                Album albumToAdd = db.Albums.Find(@song.SongID);
+
+                //change members
+                //remove any existing artist
+                songToChange.SongArtist.Clear();
+
+                //if there are members to add then add them
+                if (SelectedArtist != null)
+                {
+                    foreach (int ArtistID in SelectedArtist)
+                    {
+                        Artist artistToAdd = db.Artists.Find(ArtistID);
+                        songToChange.SongArtist.Add(artistToAdd);
+                    }
+                }
+
+                //change genres
+                //remove any existing genre
+                songToChange.SongGenre.Clear();
+
+                //if there are genres to add then add them
+                if (SelectedGenre != null)
+                {
+                    foreach (int GenreID in SelectedGenre)
+                    {
+                        Genre genreToAdd = db.Genres.Find(GenreID);
+                        songToChange.SongGenre.Add(genreToAdd);
+                    }
+                }
+
                 songToChange.SongName = song.SongName;
-                songToChange.SongArtist = song.SongArtist;
                 songToChange.SongPrice = song.SongPrice;
                 songToChange.SongLength = song.SongLength;
                 songToChange.SongRatings = song.SongRatings;
                 songToChange.SongGenre = song.SongGenre;
+                songToChange.isDiscoutned = song.isDiscoutned;
+                songToChange.DiscountPrice = song.DiscountPrice;
 
                 db.Entry(songToChange).State = EntityState.Modified;
                 db.SaveChanges();
+                return RedirectToAction("Index");
+
             }
-            ViewBag.AllGenres = GetAllAlbums(@song);
+            ViewBag.AllAlbums = GetAllAlbums(@song);
+            ViewBag.AllArtist = GetAllArtist(@song);
+            ViewBag.AllGenres = GetAllGenres(@song);
+
             return View(song);
         }
+
 
         // GET: Songs/Delete/5
         public ActionResult Delete(int? id)
@@ -527,6 +565,40 @@ namespace Team9.Controllers
             return AllGenres;
         }
 
+        public MultiSelectList GetAllGenres(Song @song)
+        {
+            var query = from g in db.Genres
+                        orderby g.GenreName
+                        select g;
+
+            //convert to list
+            List<Genre> GenreList = query.ToList();
+
+            //Add in choice for not selecting a frequency
+            Genre NoChoice = new Genre() { GenreID = 0, GenreName = "All Genres" };
+            GenreList.Add(NoChoice);
+
+            //convert to multiselect
+            MultiSelectList AllGenres = new MultiSelectList(GenreList, "GenreID", "GenreName");
+
+            return AllGenres;
+        }
+
+        public MultiSelectList GetAllArtist(Song @song)
+        {
+            var query = from g in db.Artists
+                        orderby g.ArtistName
+                        select g;
+
+            //convert to list
+            List<Artist> ArtistList = query.ToList();
+
+            //convert to multiselect
+            MultiSelectList AllArtist = new MultiSelectList(ArtistList, "ArtistID", "ArtistName");
+
+            return AllArtist;
+        }
+
         public SelectList GetAllAlbums(Song @song)
         {
             var query = from g in db.Albums
@@ -538,9 +610,9 @@ namespace Team9.Controllers
 
 
             //convert to Selectlist
-            SelectList AllAlbums2 = new SelectList(AlbumList, "AlbumID", "AlbumName");
+            SelectList AllAlbums = new SelectList(AlbumList, "AlbumID", "AlbumName");
 
-            return AllAlbums2;
+            return AllAlbums;
         }
 
     }
