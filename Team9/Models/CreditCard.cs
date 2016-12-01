@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.ComponentModel.DataAnnotations;
 
 namespace Team9.Models
 {
@@ -9,7 +10,9 @@ namespace Team9.Models
     {
         public Int32 CreditCardID { get; set; }
 
+
         private String _CCNumber;
+        [DataType(DataType.CreditCard)]
         public String CCNumber {
             get { return _CCNumber; }
             set
