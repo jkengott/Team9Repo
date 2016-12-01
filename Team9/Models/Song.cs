@@ -28,7 +28,6 @@ namespace Team9.Models
 
         public virtual List<Genre> SongGenre { get; set; }
 
-        [Required(ErrorMessage = "Please enter a valid artist")]
         public virtual List<Artist> SongArtist { get; set; }
 
         public virtual Album SongAlbum { get; set; }
