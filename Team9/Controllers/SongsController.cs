@@ -108,13 +108,13 @@ namespace Team9.Controllers
 
             if (SongString == null || SongString == "") // they didn't select anything
             {
-                SelectedSongs = db.Songs.ToList();
+                SelectedSongs = query.ToList();
 
             }
             else //they picked something
             {
                 //use linq to display searched names
-                SelectedSongs = db.Songs.Where(a => a.SongName.Contains(SongString) || a.SongArtist.Any(r => r.ArtistName == SongString)).ToList();
+                SelectedSongs = query.Where(a => a.SongName.Contains(SongString) || a.SongArtist.Any(r => r.ArtistName == SongString) || a.SongAlbum.AlbumName.Equals(SongString)).ToList();
 
                 //Create selected count of customers
                 ViewBag.SelectedSongCount = SelectedSongs.Count();

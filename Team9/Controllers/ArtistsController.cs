@@ -40,12 +40,12 @@ namespace Team9.Controllers
 
             if (SearchString == null || SearchString == "") //didnt select anything
             {
-                SelectedArtists = db.Artists.ToList();
+                SelectedArtists = query.ToList();
             }
             else //something was picked
             {
                 //linq to display searched name
-                SelectedArtists = db.Artists.Where(c => c.ArtistName.Contains(SearchString)).ToList();
+                SelectedArtists = query.Where(c => c.ArtistName.Contains(SearchString)).ToList();
 
                 int SelectedArtistCount = SelectedArtists.Count();
 

@@ -78,4 +78,21 @@ namespace Team9.Models
         public Decimal AlbumRevenue { get; set; }
 
     }
+
+    public class GenreReportViewModel
+    {
+        public Genre Genre { get; set; }
+
+        public String topArtist { get; set; }
+
+        public Int32 songCount { get; set; }
+
+        public Int32 albumCount { get; set; }
+
+        public String songRev { get; set;}
+
+        public String albumRev { get; set; }
+
+        public String totalRev { get; set; }
+    }
 }
