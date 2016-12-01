@@ -199,6 +199,7 @@ namespace Team9.Controllers
                             }
                             newItem.PurchaseItemSong = song;
                             newItem.Purchase = NewPurchase;
+                            newItem.isAlbum = false;
                             db.PurchaseItems.Add(newItem);
                             db.SaveChanges();
                         }
@@ -214,6 +215,7 @@ namespace Team9.Controllers
                         newItem.PurchaseItemPrice = song.DiscountPrice;
                     }
                     newItem.PurchaseItemSong = song;
+                    newItem.isAlbum = false;
                     newItem.Purchase = NewPurchase;
                     db.PurchaseItems.Add(newItem);
                     db.SaveChanges();

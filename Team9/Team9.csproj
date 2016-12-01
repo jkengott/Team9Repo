@@ -272,6 +272,18 @@
     <Compile Include="Migrations\201611291903249_Team9.10.Designer.cs">
       <DependentUpon>201611291903249_Team9.10.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201612011929381_Team9.11.cs" />
+    <Compile Include="Migrations\201612011929381_Team9.11.Designer.cs">
+      <DependentUpon>201612011929381_Team9.11.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201612011947359_Team9.12.cs" />
+    <Compile Include="Migrations\201612011947359_Team9.12.Designer.cs">
+      <DependentUpon>201612011947359_Team9.12.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201612011957395_Team9.13.cs" />
+    <Compile Include="Migrations\201612011957395_Team9.13.Designer.cs">
+      <DependentUpon>201612011957395_Team9.13.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Album.cs" />
     <Compile Include="Models\Artist.cs" />
@@ -301,6 +313,7 @@
     <Content Include="Views\Purchases\SongReport.cshtml" />
     <Content Include="Views\Purchases\ReportHome.cshtml" />
     <Content Include="Views\Purchases\AlbumReport.cshtml" />
+    <Content Include="Views\Purchases\GenreReport.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -341,6 +354,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201611291903249_Team9.10.resx">
       <DependentUpon>201611291903249_Team9.10.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201612011929381_Team9.11.resx">
+      <DependentUpon>201612011929381_Team9.11.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201612011947359_Team9.12.resx">
+      <DependentUpon>201612011947359_Team9.12.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201612011957395_Team9.13.resx">
+      <DependentUpon>201612011957395_Team9.13.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

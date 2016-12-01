@@ -721,6 +721,77 @@ namespace Team9.Controllers
             return View(AlbumReports);
         }
 
+        public ActionResult genreReport()
+        {
+            var query = from g in db.Genres
+                        select g;
 
+            List<Genre> allGenres = query.ToList();
+            List<GenreReportViewModel> grvmList = new List<GenreReportViewModel>();
+            foreach(Genre g in allGenres)
+            {
+                GenreReportViewModel grvm = new GenreReportViewModel();
+                grvm.totalRev = 0.ToString("c");
+                grvm.songRev = 0.ToString("c");
+                grvm.songCount = 0;
+                grvm.albumCount = 0;
+                grvm.topArtist = "N/A";
+                grvm.Genre = g;
+                Decimal topRevenue = 0;
+                foreach(Artist a in g.GenreArtists )
+                {
+                    Int32 artistSongPurchaseCount = 0;
+                    Int32 artistAlbumPurchaseCount = 0;
+                    Decimal artistSongRev = 0;
+                    Decimal artistAlbumRev = 0;
+                    Decimal totalArtistRev = 0;
+                    var query2 = from pi in db.PurchaseItems
+                                 select pi;
+                    List<PurchaseItem> allPurchaseItems = query2.ToList();
+                    List<PurchaseItem> songsPurchased = new List<PurchaseItem>();
+                    List<PurchaseItem> albumsPurchased = new List<PurchaseItem>();
+                    foreach (PurchaseItem pi in allPurchaseItems)
+                    {
+                        if (!pi.isAlbum)
+                        {
+                            if (pi.PurchaseItemSong.SongArtist.Contains(a))
+                            {
+                                songsPurchased.Add(pi);
+                            }
+                        }
+                        else
+                        {
+                            if (pi.PurchaseItemAlbum.AlbumArtist.Contains(a))
+                            {
+                                albumsPurchased.Add(pi);
+                            }
+                        }
+                    }
+                    artistSongPurchaseCount = songsPurchased.Count();
+                    foreach(PurchaseItem pi in songsPurchased)
+                    {
+                        artistSongRev += pi.PurchaseItemPrice;
+                    }
+                    artistAlbumPurchaseCount = albumsPurchased.Count();
+                    foreach (PurchaseItem pi in albumsPurchased)
+                    {
+                        artistAlbumRev += pi.PurchaseItemPrice;
+                    }
+                    totalArtistRev = artistAlbumRev + artistSongRev;
+                    if(totalArtistRev > topRevenue)
+                    {
+                        topRevenue = totalArtistRev;
+                        grvm.topArtist = a.ArtistName;
+                        grvm.albumRev = artistAlbumRev.ToString("c");
+                        grvm.albumCount = artistAlbumPurchaseCount;
+                        grvm.songRev = artistSongRev.ToString("c");
+                        grvm.songCount = artistSongPurchaseCount;
+                        grvm.totalRev = totalArtistRev.ToString("c");
+                    }
+                }
+                grvmList.Add(grvm);
+            }
+            return View(grvmList);
+        }
     }
 }
