@@ -1,0 +1,177 @@
+﻿@model IEnumerable<Team9.Models.PurchaseItemViewModel>
+@using Team9.Models
+
+@{
+    ViewBag.Title = "orderHistory";
+}
+
+<h2>OrderHistory</h2>
+
+<h2>Songs</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseItem.Purchase.PurchaseDate )
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseItem.PurchaseItemSong.SongName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseItem.PurchaseItemSong.SongAlbum.AlbumName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseItem.PurchaseItemSong.SongArtist)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseItem.PurchaseItemSong.SongGenre)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseItem.PurchaseItemPrice)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseItemRating)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseItem.PurchaseItemPrice)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseItem.Purchase.PurchaseCard.displayNumber )
+        </th>
+
+
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        if (!item.PurchaseItem.isAlbum)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PurchaseItem.Purchase.PurchaseDate)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemSong.SongName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemSong.SongAlbum.AlbumName)
+                </td>
+                <td>
+                    @foreach (Artist a in item.PurchaseItem.PurchaseItemSong.SongArtist)
+                    {
+                        <span>@a.ArtistName *</span>
+                    }
+                </td>
+
+                <td>
+                    @foreach (Genre g in item.PurchaseItem.PurchaseItemSong.SongGenre)
+                    {
+                        <span>@g.GenreName *</span>
+                    }
+                </td>
+                <td>
+                    @if (item.PurchaseItem.PurchaseItemSong.isDiscoutned)
+                    {
+                        @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemSong.DiscountPrice)
+                    }
+                    else
+                    {
+                        @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemSong.SongPrice)
+                    }
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.PurchaseItemRating)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemPrice)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PurchaseItem.Purchase.PurchaseCard.displayNumber)
+                </td>
+
+
+            </tr>
+        }
+    }
+
+</table>
+
+
+
+<h2>Albums</h2>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseItem.Purchase.PurchaseDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseItem.PurchaseItemAlbum.AlbumName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseItem.PurchaseItemAlbum.AlbumArtist)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseItem.PurchaseItemAlbum.AlbumGenre)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseItemRating)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseItem.PurchaseItemPrice)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PurchaseItem.Purchase.PurchaseCard.displayNumber )
+        </th>
+
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        if (item.PurchaseItem.isAlbum)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PurchaseItem.Purchase.PurchaseDate )
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemAlbum.AlbumName)
+                </td>
+                <td>
+                    @foreach (Artist a in item.PurchaseItem.PurchaseItemAlbum.AlbumArtist)
+                    {
+                        <span>@a.ArtistName *</span>
+                    }
+                </td>
+                <td>
+                    @foreach (Genre g in item.PurchaseItem.PurchaseItemAlbum.AlbumGenre)
+                    {
+                        <span>@g.GenreName *</span>
+                    }
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.PurchaseItemRating)
+                </td>
+                <td>
+                    @if (item.PurchaseItem.PurchaseItemAlbum.isDiscounted)
+                    {
+                        @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemAlbum.DiscountAlbumPrice)
+                    }
+                    else
+                    {
+                        @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemPrice)
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PurchaseItem.Purchase.PurchaseCard.displayNumber)
+                </td>
+
+
+            </tr>
+        }
+    }
+</table>

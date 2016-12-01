@@ -529,13 +529,15 @@ namespace Team9.Controllers
 
 
 
-        // GET: Purchases/Create
+        // GET: myMusic
         public ActionResult myMusic()
         {
             String CurrentUserId = User.Identity.GetUserId();
             var query = from p in db.Purchases
                         where p.isPurchased == true && (p.PurchaseUser.Id == CurrentUserId || p.GiftUser.Id == CurrentUserId)
                         select p;
+
+
 
             // Create a list of selected albums
             List<Purchase> Purchases = query.ToList();
@@ -578,54 +580,6 @@ namespace Team9.Controllers
             return View(SongsDisplay);
         }
 
-        // POST: Purchases/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "PurchaseID,isPurchased,PurchaseDate,isGift")] Purchase purchase)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Purchases.Add(purchase);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            return View(purchase);
-        }
-
-        // GET: Purchases/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Purchase purchase = db.Purchases.Find(id);
-            if (purchase == null)
-            {
-                return HttpNotFound();
-            }
-            return View(purchase);
-        }
-
-        // POST: Purchases/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "PurchaseID,isPurchased,PurchaseDate,isGift")] Purchase purchase)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(purchase).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(purchase);
-        }
-
         // GET: Purchases/Delete/5
         public ActionResult Delete(int? id)
         {
@@ -660,5 +614,71 @@ namespace Team9.Controllers
             }
             base.Dispose(disposing);
         }
-    }
+
+        // GET: Purchases
+        public ActionResult orderHistory()
+        {
+            String CurrentUserId = User.Identity.GetUserId();
+            var query = from p in db.Purchases
+                        where p.isPurchased == true && p.PurchaseUser.Id == CurrentUserId
+                        orderby p.PurchaseDate descending
+                        select p;
+
+            List<Purchase> PurchasedCartList = query.ToList();
+            List<PurchaseItem> PurcahseItems = new List<PurchaseItem>();
+            foreach(Purchase p in PurchasedCartList)
+            {
+                foreach(PurchaseItem pi in p.PurchaseItems)
+                {
+                    PurcahseItems.Add(pi);
+                }
+            }
+
+                //End Calc Subtotals
+                List<PurchaseItemViewModel> PIDisplay = new List<PurchaseItemViewModel>();
+                foreach (PurchaseItem pi in PurcahseItems)
+                {
+                    if (pi.isAlbum)
+                    {
+                        PurchaseItemViewModel PIVM = new PurchaseItemViewModel();
+                        PIVM.PurchaseItem = pi;
+                        PIVM.PurchaseItemRating = getAverageAlbumRating(pi.PurchaseItemAlbum.AlbumID);
+                        PIDisplay.Add(PIVM);
+                    }
+                    else
+                    {
+                        PurchaseItemViewModel PIVM = new PurchaseItemViewModel();
+                        PIVM.PurchaseItem = pi;
+                        PIVM.PurchaseItemRating = getAverageSongRating(pi.PurchaseItemSong.SongID);
+                        PIDisplay.Add(PIVM);
+                    }
+                }
+                return View(PIDisplay);
+            }
+        public ActionResult songReport()
+        {
+            var query = from s in db.Songs
+                        select s;
+
+            List<Song> allSongs = query.ToList();
+            List<PurchaseItemReportViewModel> songReports = new List<PurchaseItemReportViewModel>();
+            foreach(Song s in allSongs)
+            {
+                var query2 = from pi in db.PurchaseItems
+                             where pi.Purchase.isPurchased == true && pi.PurchaseItemSong.SongID == s.SongID
+                             select pi;
+                List<PurchaseItem> songPurchaseItem = query2.ToList();
+                Int32 purchaseCount = 0;
+                Decimal totalRevenue = 0;
+                foreach(PurchaseItem pi in songPurchaseItem)
+                {
+                    purchaseCount += 1;
+                    totalRevenue += pi.PurchaseItemPrice;
+
+                }
+
+            }
+        }
+
+        }
 }

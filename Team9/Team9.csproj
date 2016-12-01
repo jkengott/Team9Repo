@@ -197,10 +197,8 @@
     <Content Include="Views\Artists\Edit.cshtml" />
     <Content Include="Views\Artists\Index.cshtml" />
     <Content Include="Views\Artists\ReviewArtist.cshtml" />
-    <Content Include="Views\Purchases\Create.cshtml" />
     <Content Include="Views\Purchases\Delete.cshtml" />
     <Content Include="Views\Purchases\Details.cshtml" />
-    <Content Include="Views\Purchases\Edit.cshtml" />
     <Content Include="Views\Purchases\Index.cshtml" />
     <Content Include="Views\Ratings\Create.cshtml" />
     <Content Include="Views\Ratings\Delete.cshtml" />
@@ -299,6 +297,7 @@
     <Content Include="Views\Songs\SongDetailedSearch.cshtml" />
     <Content Include="Views\Purchases\Gift.cshtml" />
     <Content Include="Views\Purchases\MyMusic.cshtml" />
+    <Content Include="Views\Purchases\orderHistory.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
