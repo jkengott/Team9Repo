@@ -6,6 +6,11 @@
 }
 
 <h2>Cart</h2>
+<style>
+    .red {
+        color:red;
+    }
+</style>
 
 <h2>Songs</h2>
 
@@ -70,7 +75,8 @@
         <td>
             @if (item.PurchaseItem.PurchaseItemSong.isDiscoutned)
             {
-                @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemSong.DiscountPrice )
+                <span class="red"> @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemSong.DiscountPrice)</span>
+                <span>(</span>@Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemSong.SongPrice)<span>)</span>
             }
             else
             {
@@ -176,6 +182,13 @@
 
     <dd>
         @ViewBag.discountSubtotal
+    </dd>
+    <dt>
+        Savings:
+    </dt>
+
+    <dd>
+        <span class="red">@ViewBag.Savings</span>
     </dd>
 }
 <dt>

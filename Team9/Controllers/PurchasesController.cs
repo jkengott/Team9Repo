@@ -243,6 +243,7 @@ namespace Team9.Controllers
                 ViewBag.hasDiscount = hasDiscount;
                 ViewBag.subtotal = subtotal.ToString("c");
                 ViewBag.discountSubtotal = discountSubtotal.ToString("c");
+                ViewBag.Savings = (subtotal - discountSubtotal).ToString("c");
                 ViewBag.taxTotal = taxTotal.ToString("c");
                 ViewBag.GrandTotal = grandTotal.ToString("c");
                 //End Calc Subtotals
