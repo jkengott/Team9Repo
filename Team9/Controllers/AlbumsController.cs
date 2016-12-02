@@ -240,7 +240,7 @@ namespace Team9.Controllers
                     }
                     newItem.PurchaseItemAlbum = album;
                     newItem.Purchase = NewPurchase;
-                    newItem.isAlbum = false;
+                    newItem.isAlbum = true;
                     db.PurchaseItems.Add(newItem);
                     db.SaveChanges();
                 }
