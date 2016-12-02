@@ -69,7 +69,7 @@ namespace Team9.Controllers
 
                 AVM.Artist = a;
 
-                AVM.ArtistRating = getAverageRating(a.ArtistID);
+                AVM.ArtistRating = getAverageRating(a.ArtistID).ToString("0.0");
 
                 ArtistDisplay.Add(AVM);
 
@@ -148,14 +148,14 @@ namespace Team9.Controllers
                     {
                         ArtistIndexViewModel ab = new ArtistIndexViewModel();
                         ab.Artist = a;
-                        ab.ArtistRating = d;
+                        ab.ArtistRating = d.ToString();
                         ArtistsDisplay_ascend.Add(ab);
                     }
                     else
                     {
                         ArtistIndexViewModel ab = new ArtistIndexViewModel();
                         ab.Artist = a;
-                        ab.ArtistRating = d;
+                        ab.ArtistRating = d.ToString();
                         ArtistsDisplay_descend.Add(ab);
                     }
                 }
@@ -182,7 +182,7 @@ namespace Team9.Controllers
                 Decimal d = getAverageRating(a.ArtistID);
                     ArtistIndexViewModel ab = new ArtistIndexViewModel();
                     ab.Artist = a;
-                    ab.ArtistRating = d;
+                    ab.ArtistRating = d.ToString();
                     ArtistsList.Add(ab);
                 }
 
@@ -200,7 +200,7 @@ namespace Team9.Controllers
             // find artist id
             Artist artist = db.Artists.Find(id);
             // viewbag for average artist rating
-            ViewBag.AverageArtistRating = getAverageRating(id);
+            ViewBag.AverageArtistRating = getAverageRating(id).ToString("0.0");
             if (artist == null)
             {
                 return HttpNotFound();

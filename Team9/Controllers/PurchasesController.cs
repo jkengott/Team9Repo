@@ -254,14 +254,14 @@ namespace Team9.Controllers
                     {
                         PurchaseItemViewModel PIVM = new PurchaseItemViewModel();
                         PIVM.PurchaseItem = pi;
-                        PIVM.PurchaseItemRating = getAverageAlbumRating(pi.PurchaseItemAlbum.AlbumID);
+                        PIVM.PurchaseItemRating = getAverageAlbumRating(pi.PurchaseItemAlbum.AlbumID).ToString("0.0");
                         PIDisplay.Add(PIVM);
                     }
                     else
                     {
                         PurchaseItemViewModel PIVM = new PurchaseItemViewModel();
                         PIVM.PurchaseItem = pi;
-                        PIVM.PurchaseItemRating = getAverageSongRating(pi.PurchaseItemSong.SongID);
+                        PIVM.PurchaseItemRating = getAverageSongRating(pi.PurchaseItemSong.SongID).ToString("0.0");
                         PIDisplay.Add(PIVM);
                     }
                 }
@@ -571,7 +571,7 @@ namespace Team9.Controllers
 
                 AVM.Song = a;
 
-                AVM.SongRating = getAverageSongRating(a.SongID);
+                AVM.SongRating = getAverageSongRating(a.SongID).ToString("0.0");
 
                 SongsDisplay.Add(AVM);
 
@@ -642,14 +642,14 @@ namespace Team9.Controllers
                     {
                         PurchaseItemViewModel PIVM = new PurchaseItemViewModel();
                         PIVM.PurchaseItem = pi;
-                        PIVM.PurchaseItemRating = getAverageAlbumRating(pi.PurchaseItemAlbum.AlbumID);
+                        PIVM.PurchaseItemRating = getAverageAlbumRating(pi.PurchaseItemAlbum.AlbumID).ToString("0.0");
                         PIDisplay.Add(PIVM);
                     }
                     else
                     {
                         PurchaseItemViewModel PIVM = new PurchaseItemViewModel();
                         PIVM.PurchaseItem = pi;
-                        PIVM.PurchaseItemRating = getAverageSongRating(pi.PurchaseItemSong.SongID);
+                        PIVM.PurchaseItemRating = getAverageSongRating(pi.PurchaseItemSong.SongID).ToString("0.0");
                         PIDisplay.Add(PIVM);
                     }
                 }

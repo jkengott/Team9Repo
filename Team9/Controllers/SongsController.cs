@@ -131,7 +131,7 @@ namespace Team9.Controllers
 
                 AVM.Song = a;
 
-                AVM.SongRating = getAverageRating(a.SongID);
+                AVM.SongRating = getAverageRating(a.SongID).ToString("0.0");
 
                 SongsDisplay.Add(AVM);
 
@@ -148,7 +148,7 @@ namespace Team9.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Song song = db.Songs.Find(id);
-            ViewBag.AverageSongRating = getAverageRating(id);
+            ViewBag.AverageSongRating = getAverageRating(id).ToString("0.0");
             if (song == null)
             {
                 return HttpNotFound();
@@ -505,14 +505,14 @@ namespace Team9.Controllers
                     {
                         SongIndexViewModel ab = new SongIndexViewModel();
                         ab.Song = a;
-                        ab.SongRating = d;
+                        ab.SongRating = d.ToString();
                         SongsDisplay_ascend.Add(ab);
                     }
                     else
                     {
                         SongIndexViewModel ab = new SongIndexViewModel();
                         ab.Song = a;
-                        ab.SongRating = d;
+                        ab.SongRating = d.ToString();
                         SongsDisplay_descend.Add(ab);
                     }
                 }
@@ -540,7 +540,7 @@ namespace Team9.Controllers
                 Decimal d = getAverageRating(a.SongID);
                 SongIndexViewModel ab = new SongIndexViewModel();
                 ab.Song = a;
-                ab.SongRating = d;
+                ab.SongRating = d.ToString();
                 SongsList.Add(ab);
             }
 

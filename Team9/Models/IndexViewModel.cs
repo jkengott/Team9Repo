@@ -11,7 +11,7 @@ namespace Team9.Models
 
         public Album Album { get; set; }
 
-        public Decimal AlbumRating { get; set; }
+        public String AlbumRating { get; set; }
 
     }
 
@@ -21,7 +21,7 @@ namespace Team9.Models
 
         public Artist Artist { get; set; }
 
-        public Decimal ArtistRating { get; set; }
+        public String ArtistRating { get; set; }
 
     }
 
@@ -30,7 +30,7 @@ namespace Team9.Models
 
         public Song Song { get; set; }
 
-        public Decimal SongRating { get; set; }
+        public String SongRating { get; set; }
 
     }
 
@@ -38,7 +38,7 @@ namespace Team9.Models
     {
         public PurchaseItem PurchaseItem { get; set; }
 
-        public Decimal PurchaseItemRating { get; set; }
+        public String PurchaseItemRating { get; set; }
     }
 
     public class PurchaseViewModel

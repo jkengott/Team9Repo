@@ -106,7 +106,7 @@ namespace Team9.Controllers
 
                 AVM.Album = a;
 
-                AVM.AlbumRating = getAverageRating(a.AlbumID);
+                AVM.AlbumRating = getAverageRating(a.AlbumID).ToString("0.0");
 
                 AlbumsDisplay.Add(AVM);
 
@@ -125,7 +125,7 @@ namespace Team9.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Album album = db.Albums.Find(id);
-            ViewBag.AverageAlbumRating = getAverageRating(id);
+            ViewBag.AverageAlbumRating = getAverageRating(id).ToString("0.0");
             if (album == null)
             {
                 return HttpNotFound();
@@ -507,14 +507,14 @@ namespace Team9.Controllers
                     {
                         AlbumIndexViewModel ab = new AlbumIndexViewModel();
                         ab.Album = a;
-                        ab.AlbumRating = d;
+                        ab.AlbumRating = d.ToString();//Change to string
                         AlbumsDisplay_ascend.Add(ab);
                     }
                     else
                     {
                         AlbumIndexViewModel ab = new AlbumIndexViewModel();
                         ab.Album = a;
-                        ab.AlbumRating = d;
+                        ab.AlbumRating = d.ToString();//change to string
                         AlbumsDisplay_descend.Add(ab);
                     }
                 }
@@ -542,7 +542,7 @@ namespace Team9.Controllers
                 Decimal d = getAverageRating(a.AlbumID);
                 AlbumIndexViewModel ab = new AlbumIndexViewModel();
                 ab.Album = a;
-                ab.AlbumRating = d;
+                ab.AlbumRating = d.ToString();// change to string
                 AlbumsList.Add(ab);
             }
 
