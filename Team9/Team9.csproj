@@ -307,7 +307,11 @@
     <Content Include="Views\Purchases\ReportHome.cshtml" />
     <Content Include="Views\Purchases\AlbumReport.cshtml" />
     <Content Include="Views\Purchases\MyMusicDetailedSearch.cshtml" />
+<<<<<<< HEAD
     <Content Include="Views\Purchases\Refund.cshtml" />
+=======
+    <Content Include="Views\Home\Index.cshtml" />
+>>>>>>> origin/master
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

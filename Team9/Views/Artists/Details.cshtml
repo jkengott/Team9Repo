@@ -24,6 +24,13 @@
         <dd>
             @ViewBag.AverageArtistRating
         </dd>
+        <dt>
+            Featured?
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.isFeatured)
+        </dd>
 
     </dl>
 </div>

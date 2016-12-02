@@ -295,7 +295,7 @@ namespace Team9.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "SongID,SongName,SongPrice,SongLength,isDiscoutned,DiscountPrice")]
+        public ActionResult Edit([Bind(Include = "SongID,SongName,SongPrice,SongLength,isDiscoutned,isFeatured,DiscountPrice")]
                                     Song song, int AlbumID, int[] SelectedArtist, int[] SelectedGenre)
         {
             if (ModelState.IsValid)
@@ -344,6 +344,7 @@ namespace Team9.Controllers
                 songToChange.SongRatings = song.SongRatings;
                 songToChange.SongGenre = song.SongGenre;
                 songToChange.isDiscoutned = song.isDiscoutned;
+                songToChange.isFeatured = song.isFeatured;
                 songToChange.DiscountPrice = song.DiscountPrice;
 
                 db.Entry(songToChange).State = EntityState.Modified;
@@ -433,12 +434,14 @@ namespace Team9.Controllers
             base.Dispose(disposing);
         }
 
+        //GET: Advanced search
         public ActionResult SongDetailedSearch()
         {
             ViewBag.SelectedGenre = GetAllGenres();
             return View();
         }
 
+        //POST: Advanced search
         public ActionResult SongSearchResults(string SongSearchString, string RatingString, SortOrder SelectedBounds, int[] SelectedGenre)
         {
             var query = from a in db.Songs
