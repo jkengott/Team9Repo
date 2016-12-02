@@ -5,6 +5,15 @@
 
 <h2>@ViewBag.Title.</h2>
 
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-warning">
+        <strong>
+            @ViewBag.Error
+        </strong>
+    </div>
+}
+
 @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
     @Html.AntiForgeryToken()

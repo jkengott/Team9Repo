@@ -32,7 +32,7 @@ namespace Team9.Models
 
         public virtual List<Artist> SongArtist { get; set; }
 
-        public virtual Album SongAlbum { get; set; }
+        public virtual Album SongAlbums { get; set; }
 
         public virtual List<Rating> SongRatings { get; set; }
     }

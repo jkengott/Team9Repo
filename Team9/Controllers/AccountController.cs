@@ -7,6 +7,11 @@ using Microsoft.Owin.Security;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Net.Mail;
+using System.Collections.Generic;
+using System;
+using System.Net;
+
 
 //TODOXX: Change the namespace here to match your project's name
 namespace Team9.Controllers
@@ -110,6 +115,15 @@ namespace Team9.Controllers
             return View();
         }
 
+        public bool checkCard(CreditCard card)
+        {
+            if(card.CCNumber.Length <15 || card.CCNumber.Length>16 || card.CardType == CreditCard.CCType.None)
+            {
+                return false;
+            }
+            return true;
+        }
+
         //
         // POST: /Account/Register
         [HttpPost]
@@ -117,7 +131,7 @@ namespace Team9.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && checkCard(model.CreditCard1) && (model.CreditCard2.CardType == CreditCard.CCType.None || checkCard(model.CreditCard2)) )
             {
                 //TODO: Add fields to user here so they will be saved to the database
                 //Create a new user with all the properties you need for the class
@@ -137,6 +151,25 @@ namespace Team9.Controllers
                     //sign the user in
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
 
+                    //EmailMessage email = new EmailMessage();
+                    ////Add our website here
+                    //var client = new SmtpClient("smtp.gmail.com", 587)
+                    //{
+                    //    Credentials = new NetworkCredential("longhornmusic0@gmail.com", "shanebuechele"),
+                    //    EnableSsl = true
+                    //};
+                    //MailMessage mm = new MailMessage();
+
+
+                    ////TODO: AFTER PUBLISH put in website
+                    //string emailSubject = user.FName + ",\n Welcome to Longhorn Music!" ;
+                    //string emailBody = "Dear" + user.FName + ",\nYour account has been created! Welcome!\n\nLove,\nTeam9";
+                    //mm.Subject = emailSubject;
+                    //mm.From = new MailAddress("longhornmusic0@gmail.com", "Team 9");
+                    //mm.To.Add(new MailAddress(user.Email));
+                    //mm.Body = emailBody;
+                    //client.Send(mm);
+
                     //send them to the home page
                     return RedirectToAction("Index", "Home");
                 }
@@ -146,6 +179,7 @@ namespace Team9.Controllers
             }
 
             // If we got this far, something failed, redisplay form
+            ViewBag.Error = "Please enter valid card number";
             return View(model);
         }
 

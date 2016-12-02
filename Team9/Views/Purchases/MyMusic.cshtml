@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Team9.Models.Song>
+﻿@model IEnumerable<Team9.Models.SongIndexViewModel>
 @using Team9.Models
 
 
@@ -23,16 +23,16 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.SongName)
+            @Html.DisplayNameFor(model => model.Song.SongName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.SongArtist)
+            @Html.DisplayNameFor(model => model.Song.SongArtist)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.SongGenre)
+            @Html.DisplayNameFor(model => model.Song.SongGenre)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.SongAlbum)
+            @Html.DisplayNameFor(model => model.Song.SongAlbum)
         </th>
 
 
@@ -40,25 +40,25 @@
         {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.SongName)
+                @Html.DisplayFor(modelItem => item.Song.SongName)
             </td>
 
             <td>
-                @foreach (Artist a in item.SongArtist)
+                @foreach (Artist a in item.Song.SongArtist)
                 {
                     <span>@a.ArtistName *</span>
                 }
             </td>
 
             <td>
-                @foreach (Genre a in item.SongGenre)
+                @foreach (Genre a in item.Song.SongGenre)
                 {
                     <span>@a.GenreName *</span>
                 }
             </td>
 
             <td>
-                @Html.DisplayFor(modelItem => item.SongAlbum.AlbumName)
+                @Html.DisplayFor(modelItem => item.Song.SongAlbum.AlbumName)
             </td>
 
 

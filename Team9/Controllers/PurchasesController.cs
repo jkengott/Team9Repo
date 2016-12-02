@@ -8,8 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using Team9.Models;
 using Microsoft.AspNet.Identity;
-
-
+using System.Net.Mail;
 
 namespace Team9.Controllers
 {
@@ -67,6 +66,7 @@ namespace Team9.Controllers
             PVM.discountTotal = discountSubtotal.ToString("c");
             PVM.taxTotal = taxTotal.ToString("c");
             PVM.grandTotal = grandTotal.ToString("c");
+            PVM.purchaseUserName = p.PurchaseUser.Email;
             return PVM;
         }
 
@@ -336,12 +336,23 @@ namespace Team9.Controllers
             }
         }
 
+        public bool checkCard(string card)
+        {
+            CreditCard Card = new CreditCard();
+            Card.CCNumber = card;
+            if (Card.CCNumber.Length < 15 || Card.CCNumber.Length > 16 || Card.CardType == CreditCard.CCType.None )
+            {
+                return false;
+            }
+            return true;
+        }
+
         //POST for Purchase
         [HttpPost]
         public ActionResult Details(PurchaseViewModel Purchase, Int32 CreditCardID, bool newCard, string newCardNumber)
         {
-
-            if (ModelState.IsValid)
+            CreditCard testCard = db.Creditcards.Find(CreditCardID);
+            if (ModelState.IsValid && (checkCard(newCardNumber)&&newCard) && (!newCard&&testCard.CardType!=CreditCard.CCType.None ))
             {
                 Purchase currentPurchase = db.Purchases.Find(Purchase.PurchaseID);
                 foreach(PurchaseItem pi in currentPurchase.PurchaseItems)
@@ -394,10 +405,12 @@ namespace Team9.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-
+            String CurrentUserId2 = User.Identity.GetUserId();
+            AppUser currentUser = db.Users.Find(CurrentUserId2);
+            getCards(currentUser);
+            ViewBag.error = "Enter Valid Card Number";
             return View(Purchase);
         }
-
 
         // GET: Purchases/Gift/5
         public ActionResult Gift(int? id)
@@ -446,8 +459,9 @@ namespace Team9.Controllers
         [HttpPost]
         public ActionResult Gift(PurchaseViewModel Purchase, Int32 CreditCardID, bool newCard, string newCardNumber, string giftEmail)
         {
+            CreditCard testCard = db.Creditcards.Find(CreditCardID);
             Purchase currentPurchase = db.Purchases.Find(Purchase.PurchaseID);
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && (checkCard(newCardNumber) && newCard) && (!newCard && testCard.CardType != CreditCard.CCType.None))
             {
                 foreach (PurchaseItem pi in currentPurchase.PurchaseItems)
                 {
@@ -521,11 +535,73 @@ namespace Team9.Controllers
                 currentPurchase.isPurchased = true;
                 currentPurchase.isGift = true;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("thankYou", currentPurchase);
             }
 
             PurchaseViewModel PVM2 = calcPVM(currentPurchase);
             return View("Gift", PVM2);
+        }
+
+        public ActionResult thankYou(Purchase purchase)
+        {
+            AppUser emailRecipient = new AppUser();
+            if (purchase.isGift)
+            {
+                emailRecipient = purchase.GiftUser;
+            }
+            else
+            {
+                emailRecipient = purchase.PurchaseUser;
+            }
+            Genre recGenre = new Genre();
+            if (purchase.PurchaseItems[0].isAlbum)
+            {
+                recGenre = purchase.PurchaseItems[0].PurchaseItemAlbum.AlbumGenre[0];
+            }
+            else
+            {
+                recGenre = purchase.PurchaseItems[0].PurchaseItemSong.SongGenre[0];
+            }
+            Decimal maxRating = 0;
+            Artist recArtist = new Artist();
+            foreach (Artist a in recGenre.GenreArtists)
+            {
+                Int32 count = 0;
+                Int32 totalRating = 0;
+                Decimal averageRating = 0;
+                foreach(Rating r in a.ArtistRatings)
+                {
+                    count += 1;
+                    totalRating = +r.RatingValue;
+                }
+                averageRating =  (totalRating / count);
+                if(averageRating > maxRating)
+                {
+                    maxRating = averageRating;
+                    recArtist = a;
+                }
+            }
+            EmailMessage email = new EmailMessage();
+            //Add our website here
+            var client = new SmtpClient("smtp.gmail.com", 587)
+            {
+                Credentials = new NetworkCredential("longhornmusic0@gmail.com", "shanebuechele"),
+                EnableSsl = true
+            };
+
+
+            MailMessage mm = new MailMessage();
+
+            //TODO: AFTER PUBLISH put in website
+            String refundLink = "www.ourwebsite.com/Purchases/Refund/" + purchase.PurchaseID.ToString() ;
+            String emailSubject = "Team9" + emailRecipient.FName + " " + emailRecipient.LName + " Order #" + purchase.PurchaseID.ToString() + " Details";
+            String emailBody = "Dear" + emailRecipient.FName + ",\nYour Order is Confirmed. We also recommend you check out " + recArtist.ArtistName + " if this order is a mistake, click this link" + refundLink;
+            mm.Subject = emailSubject;
+            mm.From = new MailAddress("longhornmusic0@gmail.com", "Team 9");
+            mm.To.Add(new MailAddress(emailRecipient.Email));
+            mm.Body = emailBody;
+            client.Send(mm);
+            return RedirectToAction("Index", "Songs");
         }
 
 
@@ -542,43 +618,51 @@ namespace Team9.Controllers
 
             // Create a list of selected albums
             List<Purchase> Purchases = query.ToList();
-            List<Song> mySongs = new List<Song>();
-            foreach(Purchase p in Purchases)
+            if (Purchases.Count() == 0)
             {
-                foreach(PurchaseItem pi in p.PurchaseItems)
+                List<SongIndexViewModel> SongsDisplay = new List<SongIndexViewModel>();
+                return View(SongsDisplay);
+            }
+            else
+            {
+                List<Song> mySongs = new List<Song>();
+                foreach (Purchase p in Purchases)
                 {
-                    if (pi.isAlbum)
+                    foreach (PurchaseItem pi in p.PurchaseItems)
                     {
-                        foreach(Song s in pi.PurchaseItemAlbum.Songs)
+                        if (pi.isAlbum)
                         {
-                            mySongs.Add(s);
+                            foreach (Song s in pi.PurchaseItemAlbum.Songs)
+                            {
+                                mySongs.Add(s);
+                            }
+                        }
+                        else
+                        {
+                            mySongs.Add(pi.PurchaseItemSong);
                         }
                     }
-                    else
-                    {
-                        mySongs.Add(pi.PurchaseItemSong);
-                    }
                 }
+
+                //Create a view bag to store the number of selected albums
+                ViewBag.TotalSongCount = mySongs.Count();
+
+                List<SongIndexViewModel> SongsDisplay = new List<SongIndexViewModel>();
+
+                foreach (Song a in mySongs)
+                {
+                    SongIndexViewModel AVM = new SongIndexViewModel();
+
+                    AVM.Song = a;
+
+                    AVM.SongRating = getAverageSongRating(a.SongID).ToString("0.0");
+
+                    SongsDisplay.Add(AVM);
+
+                }
+
+                return View(SongsDisplay);
             }
-
-            //Create a view bag to store the number of selected albums
-            ViewBag.TotalSongCount = mySongs.Count();
-
-            List<SongIndexViewModel> SongsDisplay = new List<SongIndexViewModel>();
-
-            foreach (Song a in mySongs)
-            {
-                SongIndexViewModel AVM = new SongIndexViewModel();
-
-                AVM.Song = a;
-
-                AVM.SongRating = getAverageSongRating(a.SongID).ToString("0.0");
-
-                SongsDisplay.Add(AVM);
-
-            }
-
-            return View(SongsDisplay);
         }
 
         // GET: Purchases/Delete/5
@@ -793,6 +877,139 @@ namespace Team9.Controllers
                 grvmList.Add(grvm);
             }
             return View(grvmList);
+        }
+
+        public ActionResult Refund(Int32 PurchaseId)
+        {
+            String CurrentUserId = User.Identity.GetUserId();
+            var query = from p in db.Purchases
+                        where p.PurchaseID == PurchaseId
+                        select p;
+
+            List<Purchase> ActiveCartList = query.ToList();
+                Purchase ActiveCartPurchase = new Purchase();
+                ActiveCartPurchase = ActiveCartList[0];
+                List<Album> Albums = new List<Album>();
+                foreach (PurchaseItem pi in ActiveCartPurchase.PurchaseItems)
+                {
+                    if (pi.isAlbum)
+                    {
+                        Albums.Add(pi.PurchaseItemAlbum);
+                    }
+                }
+                //CalcSubtotals
+                decimal subtotal = 0;
+                decimal discountSubtotal = -1;
+                bool hasDiscount = false;
+                decimal taxTotal = 0;
+                decimal tax = .0825m;
+                decimal grandTotal = 0;
+                foreach (PurchaseItem pi in ActiveCartPurchase.PurchaseItems)
+                {
+                    if (pi.Equals(null))
+                    {
+                        continue;
+                    }
+                    else if (pi.isAlbum)
+                    {
+                        subtotal += pi.PurchaseItemAlbum.AlbumPrice;
+                        if (pi.PurchaseItemAlbum.isDiscounted)
+                        {
+                            discountSubtotal += pi.PurchaseItemAlbum.DiscountAlbumPrice;
+                            hasDiscount = true;
+                        }
+                        else
+                        {
+                            discountSubtotal += pi.PurchaseItemAlbum.AlbumPrice;
+                        }
+                    }
+                    else
+                    {
+                        subtotal += pi.PurchaseItemSong.SongPrice;
+                        if (pi.PurchaseItemSong.isDiscoutned)
+                        {
+                            discountSubtotal += pi.PurchaseItemSong.DiscountPrice;
+                            hasDiscount = true;
+                        }
+                        else
+                        {
+                            discountSubtotal += pi.PurchaseItemSong.SongPrice;
+                        }
+                    }
+                }
+                if (hasDiscount)
+                {
+                    discountSubtotal += 1;
+                    taxTotal = tax * discountSubtotal;
+                    grandTotal = discountSubtotal + taxTotal;
+                }
+                else
+                {
+                    discountSubtotal = -1;
+                    taxTotal = tax * subtotal;
+                    grandTotal = subtotal + taxTotal;
+                }
+                ViewBag.hasDiscount = hasDiscount;
+                ViewBag.subtotal = subtotal.ToString("c");
+                ViewBag.discountSubtotal = discountSubtotal.ToString("c");
+                ViewBag.Savings = (subtotal - discountSubtotal).ToString("c");
+                ViewBag.taxTotal = taxTotal.ToString("c");
+                ViewBag.GrandTotal = grandTotal.ToString("c");
+                //End Calc Subtotals
+                List<PurchaseItemViewModel> PIDisplay = new List<PurchaseItemViewModel>();
+                List<PurchaseItem> currentPurchaseItems = ActiveCartPurchase.PurchaseItems.ToList();
+                foreach (PurchaseItem pi in currentPurchaseItems)
+                {
+                    if (pi.isAlbum)
+                    {
+                        PurchaseItemViewModel PIVM = new PurchaseItemViewModel();
+                        PIVM.PurchaseItem = pi;
+                        PIVM.PurchaseItemRating = getAverageAlbumRating(pi.PurchaseItemAlbum.AlbumID).ToString("0.0");
+                        PIDisplay.Add(PIVM);
+                    }
+                    else
+                    {
+                        PurchaseItemViewModel PIVM = new PurchaseItemViewModel();
+                        PIVM.PurchaseItem = pi;
+                        PIVM.PurchaseItemRating = getAverageSongRating(pi.PurchaseItemSong.SongID).ToString("0.0");
+                        PIDisplay.Add(PIVM);
+                    }
+                }
+
+
+                return View(PIDisplay);
+            
+        }
+
+        public ActionResult cancelOrder(Int32 PurchaseID)
+        {
+            Purchase cancelPurchase = db.Purchases.Find(PurchaseID);
+            AppUser cancelUser = cancelPurchase.PurchaseUser;
+            foreach(PurchaseItem pi in cancelPurchase.PurchaseItems)
+            {
+                db.PurchaseItems.Remove(pi);
+                db.SaveChanges();
+            }
+            db.Purchases.Remove(cancelPurchase);
+            db.SaveChanges();
+            EmailMessage email = new EmailMessage();
+            var client = new SmtpClient("smtp.gmail.com", 587)
+            {
+                Credentials = new NetworkCredential("longhornmusic0@gmail.com", "shanebuechele"),
+                EnableSsl = true
+            };
+            MailMessage mm = new MailMessage();
+
+
+            //TODO: AFTER PUBLISH put in website
+            String emailSubject = "Team9" + cancelUser.FName + " " + cancelUser.LName + " Order #" + cancelPurchase.PurchaseID.ToString() + " Cancelled";
+            String emailBody = "Dear" + cancelUser.FName + ",\nYour order #" + cancelPurchase.PurchaseID + "has been cancelled";
+            mm.Subject = emailSubject;
+            mm.From = new MailAddress("longhornmusic0@gmail.com", "Team 9");
+            mm.To.Add(new MailAddress(cancelUser.Email));
+            mm.Body = emailBody;
+            client.Send(mm);
+            return View("Index", "Songs");
         }
     }
 }

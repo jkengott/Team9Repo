@@ -232,6 +232,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Messaging\Email.cs" />
     <Compile Include="Migrations\201611241826196_Team9.1.cs" />
     <Compile Include="Migrations\201611241826196_Team9.1.Designer.cs">
       <DependentUpon>201611241826196_Team9.1.cs</DependentUpon>
@@ -306,6 +307,7 @@
     <Content Include="Views\Purchases\ReportHome.cshtml" />
     <Content Include="Views\Purchases\AlbumReport.cshtml" />
     <Content Include="Views\Purchases\MyMusicDetailedSearch.cshtml" />
+    <Content Include="Views\Purchases\Refund.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

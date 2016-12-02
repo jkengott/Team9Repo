@@ -44,6 +44,8 @@ namespace Team9.Models
     public class PurchaseViewModel
     {
         public Int32 PurchaseID { get; set; }
+
+        public String purchaseUserName { get; set; }
         
         public String subtotal { get; set; }
 
@@ -57,6 +59,8 @@ namespace Team9.Models
         public String newCardNumber { get; set; }
 
         public String giftRecipient { get; set; }
+
+        public String error { get; set; }
     }
 
     public class SongReportViewModel

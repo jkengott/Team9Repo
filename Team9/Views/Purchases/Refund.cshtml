@@ -141,16 +141,16 @@
                     <span>@g.GenreName *</span>
                 }
             </td>
+
             <td>
-               @if (item.PurchaseItem.PurchaseItemAlbum.isDiscounted )
-               {
-                <span class="red"> @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemAlbum.DiscountAlbumPrice )</span>
-                <span>(</span>@Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemAlbum.AlbumPrice)<span>)</span>
-               }
-               else
-               {
-                @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemAlbum.AlbumPrice)
-               }
+                @if (item.PurchaseItem.PurchaseItemAlbum.isDiscounted )
+                {
+                    @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemAlbum.DiscountAlbumPrice)
+                }
+                else
+                {
+                    @Html.DisplayFor(modelItem => item.PurchaseItem.PurchaseItemAlbum.AlbumPrice)
+                }
             </td>
 
             <td>
@@ -209,9 +209,6 @@
 @if (Model.Count() > 0)
 {
     <div>
-        @Html.ActionLink("Proceed to Checkout", "Details", "Purchases", new { id = Model.First().PurchaseItem.Purchase.PurchaseID }, new { @class = "btn btn-success" })
-    </div>
-    <div>
-        @Html.ActionLink("Give as Gift", "Gift", "Purchases", new { id = Model.First().PurchaseItem.Purchase.PurchaseID }, new { @class = "btn btn-success" })
+        @Html.ActionLink("Cancel Order", "cancelOrder", "Purchases", new { id = Model.First().PurchaseItem.Purchase.PurchaseID }, new { @class = "btn btn-success" })
     </div>
 }
