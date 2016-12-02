@@ -21,6 +21,8 @@ namespace Team9.Models
 
         public bool isDiscoutned { get; set; }
 
+        public bool isFeatured { get; set; }
+
         public Decimal DiscountPrice { get; set; }
 
         [Required(ErrorMessage = "Please enter a valid length")]

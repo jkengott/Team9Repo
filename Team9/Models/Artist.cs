@@ -17,6 +17,8 @@ namespace Team9.Models
         [Required(ErrorMessage = "Please enter a valid name")]
         public String ArtistName { get; set; }
 
+        public bool isFeatured { get; set; }
+
         public virtual List<Genre> ArtistGenre { get; set; }
 
         public virtual List<Rating> ArtistRatings { get; set; }

@@ -18,6 +18,8 @@ namespace Team9.Models
 
         public bool isDiscounted { get; set; }
 
+        public bool isFeatured { get; set; }
+
         [Required(ErrorMessage = "Please enter a valid price")]
         public Decimal AlbumPrice { get; set; }
 
