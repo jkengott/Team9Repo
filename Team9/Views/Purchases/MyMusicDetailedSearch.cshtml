@@ -7,7 +7,7 @@
 
 <h2>MyMusicDetailedSearch</h2>
 
-@using (Html.BeginForm("MyMusicSearchResults", "Purchases/myMusic", FormMethod.Get))
+@using (Html.BeginForm("MyMusicSearchResults", "Purchase", FormMethod.Get))
 {
     <p class="form-group">
         Song, Album or Artist Name: @Html.TextBox("SongSearchString", null, new { @class = "form-control" }) <br />

@@ -16,7 +16,7 @@ namespace Team9.Controllers
     {
         private AppDbContext db = new AppDbContext();
 
-        public PurchaseViewModel calcPVM(Purchase p)
+        public PurchaseViewModel calcPVM (Purchase p)
         {
             decimal subtotal = 0;
             decimal discountSubtotal = -1;
@@ -143,14 +143,14 @@ namespace Team9.Controllers
             List<Purchase> ActiveCartList = query.ToList();
             Purchase ActiveCart = ActiveCartList[0];
             List<Song> AlbumSongs = new List<Song>();
-            foreach (Album a in Albums)
+            foreach(Album a in Albums)
             {
-                foreach (Song s in a.Songs)
+                foreach(Song s in a.Songs)
                 {
                     AlbumSongs.Add(s);
                 }
             }
-            foreach (PurchaseItem pi in ActiveCart.PurchaseItems)
+            foreach(PurchaseItem pi in ActiveCart.PurchaseItems)
             {
                 if (!pi.isAlbum)
                 {
@@ -172,12 +172,12 @@ namespace Team9.Controllers
                         select p;
 
             List<Purchase> ActiveCartList = query.ToList();
-            if (ActiveCartList.Count() == 1)
+            if (ActiveCartList.Count() == 1 )
             {
                 Purchase ActiveCartPurchase = new Purchase();
                 ActiveCartPurchase = ActiveCartList[0];
                 List<Album> Albums = new List<Album>();
-                foreach (PurchaseItem pi in ActiveCartPurchase.PurchaseItems)
+                foreach(PurchaseItem pi in ActiveCartPurchase.PurchaseItems)
                 {
                     if (pi.isAlbum)
                     {
@@ -243,25 +243,26 @@ namespace Team9.Controllers
                 ViewBag.hasDiscount = hasDiscount;
                 ViewBag.subtotal = subtotal.ToString("c");
                 ViewBag.discountSubtotal = discountSubtotal.ToString("c");
+                ViewBag.Savings = (subtotal - discountSubtotal).ToString("c");
                 ViewBag.taxTotal = taxTotal.ToString("c");
                 ViewBag.GrandTotal = grandTotal.ToString("c");
                 //End Calc Subtotals
                 List<PurchaseItemViewModel> PIDisplay = new List<PurchaseItemViewModel>();
                 List<PurchaseItem> currentPurchaseItems = ActiveCartPurchase.PurchaseItems.ToList();
-                foreach (PurchaseItem pi in currentPurchaseItems)
+                foreach(PurchaseItem pi in currentPurchaseItems)
                 {
                     if (pi.isAlbum)
                     {
                         PurchaseItemViewModel PIVM = new PurchaseItemViewModel();
                         PIVM.PurchaseItem = pi;
-                        PIVM.PurchaseItemRating = getAverageAlbumRating(pi.PurchaseItemAlbum.AlbumID).ToString();
+                        PIVM.PurchaseItemRating = getAverageAlbumRating(pi.PurchaseItemAlbum.AlbumID).ToString("0.0");
                         PIDisplay.Add(PIVM);
                     }
                     else
                     {
                         PurchaseItemViewModel PIVM = new PurchaseItemViewModel();
                         PIVM.PurchaseItem = pi;
-                        PIVM.PurchaseItemRating = getAverageSongRating(pi.PurchaseItemSong.SongID).ToString();
+                        PIVM.PurchaseItemRating = getAverageSongRating(pi.PurchaseItemSong.SongID).ToString("0.0");
                         PIDisplay.Add(PIVM);
                     }
                 }
@@ -299,27 +300,27 @@ namespace Team9.Controllers
             String CurrentUserId = User.Identity.GetUserId();
             Purchase ActiveCartPurchase = db.Purchases.Find(id);
             List<Album> Albums = new List<Album>();
-
-            foreach (PurchaseItem pi in ActiveCartPurchase.PurchaseItems)
-            {
-                if (pi.isAlbum)
+                
+                foreach (PurchaseItem pi in ActiveCartPurchase.PurchaseItems)
                 {
-                    Albums.Add(pi.PurchaseItemAlbum);
+                    if (pi.isAlbum)
+                    {
+                        Albums.Add(pi.PurchaseItemAlbum);
+                    }
+                } 
+                if (id == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
-            }
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Purchase purchase = db.Purchases.Find(id);
-            if (purchase == null)
-            {
-                return HttpNotFound();
-            }
-            if (checkDuplicates(Albums))
-            {
-                return RedirectToAction("Index");
-            }
+                Purchase purchase = db.Purchases.Find(id);
+                if (purchase == null)
+                {
+                    return HttpNotFound();
+                }
+                if (checkDuplicates(Albums))
+                {
+                    return RedirectToAction("Index");
+                }
             else
             {
                 //CalcSubtotals
@@ -354,7 +355,7 @@ namespace Team9.Controllers
             if (ModelState.IsValid && (checkCard(newCardNumber)&&newCard) && (!newCard&&testCard.CardType!=CreditCard.CCType.None ))
             {
                 Purchase currentPurchase = db.Purchases.Find(Purchase.PurchaseID);
-                foreach (PurchaseItem pi in currentPurchase.PurchaseItems)
+                foreach(PurchaseItem pi in currentPurchase.PurchaseItems)
                 {
                     if (pi.isAlbum)
                     {
@@ -400,7 +401,7 @@ namespace Team9.Controllers
                 }
                 currentPurchase.PurchaseDate = DateTime.Now;
                 currentPurchase.isPurchased = true;
-
+                
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -510,7 +511,7 @@ namespace Team9.Controllers
                              select u;
                 List<AppUser> userList = query2.ToList();
                 List<String> userEmails = new List<String>();
-                foreach (AppUser a in userList)
+                foreach(AppUser a in userList)
                 {
                     userEmails.Add(a.Email);
                 }
@@ -528,7 +529,7 @@ namespace Team9.Controllers
                     PurchaseViewModel PVM = calcPVM(currentPurchase);
                     getCards(currentPurchase.PurchaseUser);
                     ViewBag.giftWarning = "Enter a valid Username";
-                    return View("Gift", PVM);
+                    return View("Gift",PVM);
                 }
                 currentPurchase.PurchaseDate = DateTime.Now;
                 currentPurchase.isPurchased = true;
@@ -606,83 +607,7 @@ namespace Team9.Controllers
 
 
         // GET: myMusic
-        public ActionResult myMusic(string SongString)
-        {
-            String CurrentUserId = User.Identity.GetUserId();
-            var query = from p in db.Purchases
-                        where p.isPurchased == true && (p.PurchaseUser.Id == CurrentUserId || p.GiftUser.Id == CurrentUserId)
-                        select p;
-
-
-
-            // Create a list of selected albums
-            List<Purchase> Purchases = query.ToList();
-            List<Song> mySongs = new List<Song>();
-            foreach (Purchase p in Purchases)
-            {
-                foreach (PurchaseItem pi in p.PurchaseItems)
-                {
-                    if (pi.isAlbum)
-                    {
-                        foreach (Song s in pi.PurchaseItemAlbum.Songs)
-                        {
-                            mySongs.Add(s);
-                        }
-                    }
-                    else
-                    {
-                        mySongs.Add(pi.PurchaseItemSong);
-                    }
-                }
-            }
-            List<Song> DisplaySongs;
-            if (SongString == null || SongString == "") // they didn't select anything
-            {
-                DisplaySongs = mySongs;
-
-            }
-            else //they picked something
-            {
-                //use linq to display searched names
-                //mySongs = mySongs.ToList();
-                DisplaySongs = new List<Song>();
-                foreach (Song s in mySongs)
-                {
-                    if (s.SongName.Contains(SongString) || s.SongArtist.Any(r => r.ArtistName == SongString))
-                    {
-                        DisplaySongs.Add(s);
-                    }
-                }
-
-                foreach (Song s in mySongs)
-                {
-                    if (s.SongAlbum != null)
-                    {
-                        if (s.SongAlbum.AlbumName.Contains(SongString))
-                        {
-                            DisplaySongs.Add(s);
-                        }
-                    }
-                }
-                //mySongs.Clear();
-
-                //Create selected count of customers
-                ViewBag.SelectedSongCount = DisplaySongs.Count();
-
-                //order the record to display sorted by lastname, first name, average sales
-                // mySongs.OrderBy(a => a.SongName);
-            }
-
-            return View(DisplaySongs);
-        }
-
-        public ActionResult MyMusicDetailedSearch()
-        {
-            ViewBag.SelectedGenre = GetAllGenres();
-            return View();
-        }
-
-        public ActionResult MyMusicSearchResults(string SongSearchString, Int32[] SelectedGenre)
+        public ActionResult myMusic()
         {
             String CurrentUserId = User.Identity.GetUserId();
             var query = from p in db.Purchases
@@ -705,17 +630,25 @@ namespace Team9.Controllers
                 foreach (Purchase p in Purchases)
 =======
             List<Song> mySongs = new List<Song>();
-            foreach (Purchase p in Purchases)
+            foreach(Purchase p in Purchases)
             {
+<<<<<<< HEAD
                 foreach (PurchaseItem pi in p.PurchaseItems)
+>>>>>>> origin/master
+=======
+                foreach(PurchaseItem pi in p.PurchaseItems)
 >>>>>>> origin/master
                 {
                     foreach (PurchaseItem pi in p.PurchaseItems)
                     {
 <<<<<<< HEAD
+<<<<<<< HEAD
                         if (pi.isAlbum)
 =======
                         foreach (Song s in pi.PurchaseItemAlbum.Songs)
+>>>>>>> origin/master
+=======
+                        foreach(Song s in pi.PurchaseItemAlbum.Songs)
 >>>>>>> origin/master
                         {
                             foreach (Song s in pi.PurchaseItemAlbum.Songs)
@@ -752,102 +685,32 @@ namespace Team9.Controllers
             }
 =======
             }
-            List<Song> DisplaySongs;
-            if (SongSearchString == null || SongSearchString == "") // they didn't select anything
+
+            //Create a view bag to store the number of selected albums
+            ViewBag.TotalSongCount = mySongs.Count();
+
+            List<SongIndexViewModel> SongsDisplay = new List<SongIndexViewModel>();
+
+            foreach (Song a in mySongs)
             {
-                if (SelectedGenre == null) //nothing was selected
-                {
-                    ViewBag.SelectedGenre = "No genres were selected";
-                    DisplaySongs = mySongs.ToList();
-                    return View(DisplaySongs);
-                }
-                else
-                {
-                    String strSelectedGenre = "The selected genre(s) is/are: ";
+                SongIndexViewModel AVM = new SongIndexViewModel();
 
-                    //get list of genres
-                    ViewBag.AllGenres = GetAllGenres();
+                AVM.Song = a;
 
-                    DisplaySongs = new List<Song>();
-                    foreach (Song s in mySongs)
-                    {
+                AVM.SongRating = getAverageSongRating(a.SongID).ToString("0.0");
 
-                        foreach (int GenreID in SelectedGenre)
-                        {
-                            if (s.SongGenre.Any(g => g.GenreID == GenreID))
-                            {
-                                DisplaySongs.Add(s);
-                            }
-                        }
-                    }
-                    ViewBag.SelectedGenre = strSelectedGenre;
-                    return View(DisplaySongs);
-                }
-            }
-            else //they picked something
-            {
-                //use linq to display searched names
-                //mySongs = mySongs.ToList();
-                DisplaySongs = new List<Song>();
-                foreach (Song s in mySongs)
-                {
-                    if (s.SongName.Contains(SongSearchString) || s.SongArtist.Any(r => r.ArtistName == SongSearchString))
-                    {
-                        DisplaySongs.Add(s);
-                    }
-                }
+                SongsDisplay.Add(AVM);
 
-                foreach (Song s in mySongs)
-                {
-                    if (s.SongAlbum != null)
-                    {
-                        if (s.SongAlbum.AlbumName.Contains(SongSearchString))
-                        {
-                            DisplaySongs.Add(s);
-                        }
-                    }
-                }
-
-                if (SelectedGenre == null) //nothing was selected
-                {
-                    ViewBag.SelectedGenre = "No genres were selected";
-                }
-                else
-                {
-                    String strSelectedGenre = "The selected genre(s) is/are: ";
-
-                    //get list of genres
-                    ViewBag.AllGenres = GetAllGenres();
-
-                    foreach (Song s in mySongs)
-                    {
-
-                        foreach (int GenreID in SelectedGenre)
-                        {
-                            if (s.SongGenre.Any(g => g.GenreID == GenreID))
-                            {
-                                DisplaySongs.Add(s);
-                            }
-                        }
-                    }
-
-                    ViewBag.SelectedGenre = strSelectedGenre;
-                }
-
-                //Create selected count of customers
-                ViewBag.SelectedSongCount = DisplaySongs.Count();
-
-                //order the record to display sorted by lastname, first name, average sales
-                // mySongs.OrderBy(a => a.SongName);
             }
 
+<<<<<<< HEAD
             return View(DisplaySongs);
 
 >>>>>>> origin/master
+=======
+            return View(SongsDisplay);
+>>>>>>> origin/master
         }
-
-
-
 
         // GET: Purchases/Delete/5
         public ActionResult Delete(int? id)
@@ -894,37 +757,36 @@ namespace Team9.Controllers
                         select p;
 
             List<Purchase> PurchasedCartList = query.ToList();
-
             List<PurchaseItem> PurcahseItems = new List<PurchaseItem>();
-            foreach (Purchase p in PurchasedCartList)
+            foreach(Purchase p in PurchasedCartList)
             {
-                foreach (PurchaseItem pi in p.PurchaseItems)
+                foreach(PurchaseItem pi in p.PurchaseItems)
                 {
                     PurcahseItems.Add(pi);
                 }
             }
 
-            //End Calc Subtotals
-            List<PurchaseItemViewModel> PIDisplay = new List<PurchaseItemViewModel>();
-            foreach (PurchaseItem pi in PurcahseItems)
-            {
-                if (pi.isAlbum)
+                //End Calc Subtotals
+                List<PurchaseItemViewModel> PIDisplay = new List<PurchaseItemViewModel>();
+                foreach (PurchaseItem pi in PurcahseItems)
                 {
-                    PurchaseItemViewModel PIVM = new PurchaseItemViewModel();
-                    PIVM.PurchaseItem = pi;
-                    PIVM.PurchaseItemRating = getAverageAlbumRating(pi.PurchaseItemAlbum.AlbumID).ToString();
-                    PIDisplay.Add(PIVM);
+                    if (pi.isAlbum)
+                    {
+                        PurchaseItemViewModel PIVM = new PurchaseItemViewModel();
+                        PIVM.PurchaseItem = pi;
+                        PIVM.PurchaseItemRating = getAverageAlbumRating(pi.PurchaseItemAlbum.AlbumID).ToString("0.0");
+                        PIDisplay.Add(PIVM);
+                    }
+                    else
+                    {
+                        PurchaseItemViewModel PIVM = new PurchaseItemViewModel();
+                        PIVM.PurchaseItem = pi;
+                        PIVM.PurchaseItemRating = getAverageSongRating(pi.PurchaseItemSong.SongID).ToString("0.0");
+                        PIDisplay.Add(PIVM);
+                    }
                 }
-                else
-                {
-                    PurchaseItemViewModel PIVM = new PurchaseItemViewModel();
-                    PIVM.PurchaseItem = pi;
-                    PIVM.PurchaseItemRating = getAverageSongRating(pi.PurchaseItemSong.SongID).ToString();
-                    PIDisplay.Add(PIVM);
-                }
+                return View(PIDisplay);
             }
-            return View(PIDisplay);
-        }
 
         //GET: ReportHome
         public ActionResult ReportHome()
@@ -940,7 +802,7 @@ namespace Team9.Controllers
 
             List<Song> allSongs = query.ToList();
             List<SongReportViewModel> songReports = new List<SongReportViewModel>();
-            foreach (Song s in allSongs)
+            foreach(Song s in allSongs)
             {
                 SongReportViewModel sivm = new SongReportViewModel();
                 var query2 = from pi in db.PurchaseItems
@@ -949,7 +811,7 @@ namespace Team9.Controllers
                 List<PurchaseItem> songPurchaseItem = query2.ToList();
                 Int32 purchaseCount = 0;
                 Decimal totalRevenue = 0;
-                foreach (PurchaseItem pi in songPurchaseItem)
+                foreach(PurchaseItem pi in songPurchaseItem)
                 {
                     purchaseCount += 1;
                     totalRevenue += pi.PurchaseItemPrice;
@@ -991,24 +853,79 @@ namespace Team9.Controllers
             return View(AlbumReports);
         }
 
-        public MultiSelectList GetAllGenres()
+        public ActionResult genreReport()
         {
             var query = from g in db.Genres
-                        orderby g.GenreName
                         select g;
 
-            //convert to list
-            List<Genre> GenreList = query.ToList();
-
-            //Add in choice for not selecting a frequency
-            Genre NoChoice = new Genre() { GenreID = 0, GenreName = "All Genres" };
-            GenreList.Add(NoChoice);
-
-            //convert to multiselect
-            MultiSelectList AllGenres = new MultiSelectList(GenreList.OrderBy(g => g.GenreName), "GenreID", "GenreName");
-
-            return AllGenres;
+            List<Genre> allGenres = query.ToList();
+            List<GenreReportViewModel> grvmList = new List<GenreReportViewModel>();
+            foreach(Genre g in allGenres)
+            {
+                GenreReportViewModel grvm = new GenreReportViewModel();
+                grvm.totalRev = 0.ToString("c");
+                grvm.songRev = 0.ToString("c");
+                grvm.songCount = 0;
+                grvm.albumCount = 0;
+                grvm.topArtist = "N/A";
+                grvm.Genre = g;
+                Decimal topRevenue = 0;
+                foreach(Artist a in g.GenreArtists )
+                {
+                    Int32 artistSongPurchaseCount = 0;
+                    Int32 artistAlbumPurchaseCount = 0;
+                    Decimal artistSongRev = 0;
+                    Decimal artistAlbumRev = 0;
+                    Decimal totalArtistRev = 0;
+                    var query2 = from pi in db.PurchaseItems
+                                 select pi;
+                    List<PurchaseItem> allPurchaseItems = query2.ToList();
+                    List<PurchaseItem> songsPurchased = new List<PurchaseItem>();
+                    List<PurchaseItem> albumsPurchased = new List<PurchaseItem>();
+                    foreach (PurchaseItem pi in allPurchaseItems)
+                    {
+                        if (!pi.isAlbum)
+                        {
+                            if (pi.PurchaseItemSong.SongArtist.Contains(a))
+                            {
+                                songsPurchased.Add(pi);
+                            }
+                        }
+                        else
+                        {
+                            if (pi.PurchaseItemAlbum.AlbumArtist.Contains(a))
+                            {
+                                albumsPurchased.Add(pi);
+                            }
+                        }
+                    }
+                    artistSongPurchaseCount = songsPurchased.Count();
+                    foreach(PurchaseItem pi in songsPurchased)
+                    {
+                        artistSongRev += pi.PurchaseItemPrice;
+                    }
+                    artistAlbumPurchaseCount = albumsPurchased.Count();
+                    foreach (PurchaseItem pi in albumsPurchased)
+                    {
+                        artistAlbumRev += pi.PurchaseItemPrice;
+                    }
+                    totalArtistRev = artistAlbumRev + artistSongRev;
+                    if(totalArtistRev > topRevenue)
+                    {
+                        topRevenue = totalArtistRev;
+                        grvm.topArtist = a.ArtistName;
+                        grvm.albumRev = artistAlbumRev.ToString("c");
+                        grvm.albumCount = artistAlbumPurchaseCount;
+                        grvm.songRev = artistSongRev.ToString("c");
+                        grvm.songCount = artistSongPurchaseCount;
+                        grvm.totalRev = totalArtistRev.ToString("c");
+                    }
+                }
+                grvmList.Add(grvm);
+            }
+            return View(grvmList);
         }
+<<<<<<< HEAD
 
 <<<<<<< HEAD
         public ActionResult Refund(Int32 PurchaseId)
@@ -1146,6 +1063,7 @@ namespace Team9.Controllers
 =======
 
 >>>>>>> origin/master
+=======
+>>>>>>> origin/master
     }
 }
-
