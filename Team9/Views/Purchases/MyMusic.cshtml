@@ -1,85 +1,70 @@
-﻿@model IEnumerable<Team9.Models.SongIndexViewModel>
-    @using Team9.Models
+﻿@model IEnumerable<Team9.Models.Song>
+@using Team9.Models
+
 
 @{
     ViewBag.Title = "MyMusic";
 }
 
-<h2>Index</h2>
+<h2>My Music</h2>
 
-<p>
-    @using (Html.BeginForm())
-    {
+@using (Html.BeginForm())
+{
     <p class="form-group">
         Search: @Html.TextBox("SongString", null, new { @class = "form-control" }) <br />
         <input type="submit" value="Search" class="btn btn-default" />
-        @Html.ActionLink("Advanced Search", "SongDetailedSearch", null, new { @class = "btn btn-default" })
-        @Html.ActionLink("Show All", "Index", null, new { @class = "btn btn-default" })
+        @Html.ActionLink("Search By Genre", "MyMusicDetailedSearch", null, new { @class = "btn btn-default" })
+        @Html.ActionLink("Show All", "MyMusic", null, new { @class = "btn btn-default" })
 
     </p>
-    }
-
-    <p>
-        @Html.ActionLink("Create New", "Create")
-    </p>
-
-    <p>Displaying @ViewBag.SelectedSongCount of @ViewBag.TotalSongCount <p />
+}
 
 
-    <table class="table">
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Song.SongName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Song.SongPrice)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Song.SongLength)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Song.SongAlbum.AlbumName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Song.SongArtist)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SongRating)
-            </th>
-            <th></th>
-        </tr>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.SongName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SongArtist)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SongGenre)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.SongAlbum)
+        </th>
+
 
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.ActionLink(item.Song.SongName, "Details", new { id = item.Song.SongID })
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Song.SongPrice)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Song.SongLength)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Song.SongAlbum.AlbumName)
-                </td>
-                <td>
-                    @foreach (Artist a in item.Song.SongArtist)
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.SongName)
+            </td>
+
+            <td>
+                @foreach (Artist a in item.SongArtist)
                 {
-                        <span>@a.ArtistName *</span>
-                    }
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SongRating)
-                </td>
+                    <span>@a.ArtistName *</span>
+                }
+            </td>
+
+            <td>
+                @foreach (Genre a in item.SongGenre)
+                {
+                    <span>@a.GenreName *</span>
+                }
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.SongAlbum.AlbumName)
+            </td>
 
 
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.Song.SongID }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Song.SongID })
-                </td>
-            </tr>
-        }
 
-    </table>
+        </tr>
+
+    }
+
+</table>

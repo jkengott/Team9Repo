@@ -108,13 +108,13 @@ namespace Team9.Controllers
 
             if (SongString == null || SongString == "") // they didn't select anything
             {
-                SelectedSongs = db.Songs.ToList();
+                SelectedSongs = query.ToList();
 
             }
             else //they picked something
             {
                 //use linq to display searched names
-                SelectedSongs = db.Songs.Where(a => a.SongName.Contains(SongString) || a.SongArtist.Any(r => r.ArtistName == SongString)).ToList();
+                SelectedSongs = query.Where(a => a.SongName.Contains(SongString) || a.SongArtist.Any(r => r.ArtistName == SongString) || a.SongAlbum.AlbumName.Equals(SongString)).ToList();
 
                 //Create selected count of customers
                 ViewBag.SelectedSongCount = SelectedSongs.Count();
@@ -199,7 +199,6 @@ namespace Team9.Controllers
                             }
                             newItem.PurchaseItemSong = song;
                             newItem.Purchase = NewPurchase;
-                            newItem.isAlbum = false;
                             db.PurchaseItems.Add(newItem);
                             db.SaveChanges();
                         }
@@ -215,7 +214,6 @@ namespace Team9.Controllers
                         newItem.PurchaseItemPrice = song.DiscountPrice;
                     }
                     newItem.PurchaseItemSong = song;
-                    newItem.isAlbum = false;
                     newItem.Purchase = NewPurchase;
                     db.PurchaseItems.Add(newItem);
                     db.SaveChanges();
