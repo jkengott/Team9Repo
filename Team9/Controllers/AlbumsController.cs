@@ -298,7 +298,7 @@ namespace Team9.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "AlbumID,AlbumName,AlbumPrice,isDiscounted,DiscountAlbumPrice")]
+        public ActionResult Edit([Bind(Include = "AlbumID,AlbumName,AlbumPrice,isDiscounted,isFeatured,DiscountAlbumPrice")]
                                        Album album, int[] SelectedSongs, int[] SelectedGenre, int[] SelectedArtist)
         {
             if (ModelState.IsValid)
@@ -314,6 +314,7 @@ namespace Team9.Controllers
                     {
                         Song songToAdd = db.Songs.Find(SongID);
                         albumToChange.Songs.Add(songToAdd);
+
                     }
                 }
 
@@ -345,6 +346,7 @@ namespace Team9.Controllers
                     }
                 }
 
+                albumToChange.isFeatured = album.isFeatured;
                 albumToChange.AlbumName = album.AlbumName;
                 albumToChange.AlbumPrice = album.AlbumPrice;
                 albumToChange.isDiscounted = album.isDiscounted;

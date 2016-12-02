@@ -95,4 +95,25 @@ namespace Team9.Models
 
         public String totalRev { get; set; }
     }
+
+    public class HomeIndexViewModel
+    {
+        public Song Song { get; set; }
+
+        public bool isSong { get; set; }
+
+        public Artist Artist { get; set; }
+
+        public bool isArist { get; set; }
+
+        public Album Album { get; set; }
+
+        public bool isAlbum { get; set; }
+
+        public String SongRating { get; set; }
+
+        public String ArtistRating { get; set; }
+
+        public String AlbumRating { get; set; }
+    }
 }

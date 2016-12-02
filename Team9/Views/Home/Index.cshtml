@@ -1,0 +1,175 @@
+﻿@model IEnumerable<Team9.Models.HomeIndexViewModel>
+    @using Team9.Models
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+@using (Html.BeginForm())
+{
+    @*   SONGS   *@
+    <h3>
+        Featured Songs
+    </h3>
+    <div>
+        <table class="table">
+            <tr>
+                <th>
+                    Song Name
+                </th>               
+                <th>
+                    Song Price
+                </th>
+                <th>
+                    Song Album
+                </th>
+                <th>
+                    Song Artist(s)
+                </th>
+                <th>
+                    Song Genre(s)
+                </th>
+                <th>
+                    Song Rating
+                </th>
+            </tr>
+            @foreach (var item in Model)
+            {
+                if (item.isSong)
+                {
+                    <tr>
+                        <td>@Html.ActionLink(item.Song.SongName, "Details", "Songs", new { id = item.Song.SongID }, null)</td>
+
+                        <td>@Html.DisplayFor(modelItem => item.Song.SongPrice)</td>
+
+                        <td>@Html.ActionLink(item.Song.SongAlbum.AlbumName, "Details", "Albums", new { id = item.Song.SongAlbum.AlbumID }, null)</td>
+
+                        <td>
+                            @foreach (Artist a in item.Song.SongArtist)
+                            {
+                                <span>@Html.ActionLink(a.ArtistName, "Details", "Artists", new { id = a.ArtistID }, null) *</span>
+                            }
+                        </td>
+
+                        <td>
+                            @foreach (Genre g in item.Song.SongGenre)
+                            {
+                                <span>@Html.DisplayFor(modelItem => g.GenreName) *</span>
+                            }
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SongRating)
+                        </td>
+
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+
+
+
+
+    @*     ARTISTS     *@
+    <h3>
+        Featured Artists
+    </h3>
+    <div>
+        <table class="table">
+            <tr>
+                <th>
+                    Artist Name
+                </th>
+                <th>
+                    Artist Album(s)
+                </th>
+                <th>
+                    Artist Genre(s)
+                </th>
+                <th>
+                    Artist Rating
+                </th>
+            </tr>
+            @foreach (var item in Model)
+            {
+                if (item.isArist)
+                {
+                    <tr>
+                        <td>@Html.ActionLink(item.Artist.ArtistName , "Details", "Artists", new { id = item.Artist.ArtistID }, null)</td>
+
+                        <td>
+                            @foreach (Album a in item.Artist.ArtistAlbums)
+                            {
+                                <span>@Html.ActionLink(a.AlbumName, "Details", "Albums", new { id = a.AlbumID }, null) *</span>
+                            }
+                        </td>
+
+                        <td>
+                            @foreach (Genre g in item.Artist.ArtistGenre)
+                            {
+                                <span>@Html.DisplayFor(modelItem => g.GenreName) *</span>
+                            }
+                        </td>
+
+                        <td>@Html.DisplayFor(modelItem => item.ArtistRating)</td>
+                    </tr>
+
+                }
+            }
+        </table>
+    </div>
+    @*      ALBUMS        *@
+    <h3>
+        Featured Albums
+    </h3>
+    <div>
+        <table class="table">
+            <tr>
+                <th>
+                    Album Name
+                </th>
+                <th>
+                    Album Price
+                </th>
+                <th>
+                    Album Artist(s)
+                </th>
+                <th>
+                    Album Genre(s)
+                </th>
+                <th>
+                    Album Rating
+                </th>
+            </tr>
+            @foreach (var item in Model)
+            {
+                if (item.isAlbum)
+                {
+                    <tr>
+                        <td>@Html.ActionLink(item.Album.AlbumName, "Details", "Albums", new { id = item.Album.AlbumID }, null)</td>
+
+                        <td>@Html.DisplayFor(modelItem => item.Album.AlbumPrice)</td>
+
+                        <td>
+                            @foreach (Artist a in item.Album.AlbumArtist)
+                            {
+                                <span>@Html.ActionLink(a.ArtistName, "Details", "Artists", new { id = a.ArtistID }, null) *</span>
+                            }
+                        </td>
+
+                        <td>
+                            @foreach (Genre g in item.Album.AlbumGenre)
+                            {
+                                <span>@Html.DisplayFor(modelItem => g.GenreName) *</span>
+                            }
+                        </td>
+
+                        <td>@Html.DisplayFor(modelItem => item.AlbumRating)</td>
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+}

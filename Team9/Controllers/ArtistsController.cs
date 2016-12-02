@@ -256,7 +256,7 @@ namespace Team9.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ArtistID,ArtistName")] Artist artist, int[] SelectedSongs, int[] SelectedAlbums, int[] SelectedGenres)
+        public ActionResult Edit([Bind(Include = "ArtistID,ArtistName,isFeatured")] Artist artist, int[] SelectedSongs, int[] SelectedAlbums, int[] SelectedGenres)
         {
             if (ModelState.IsValid) // NOT CATCHING AS VALID!!!!
             {
@@ -302,6 +302,8 @@ namespace Team9.Controllers
                     }
                 }
 
+                artistToChange.ArtistName = artist.ArtistName;
+                artistToChange.isFeatured = artist.isFeatured;
 
                 db.Entry(artistToChange).State = EntityState.Modified;
                 db.SaveChanges();
